@@ -26,16 +26,20 @@ const findSector = (number) => SECTORS.find((s) => s.number === Number(number));
 const normalizeId = (value) => value.trim().toUpperCase();
 const formatCredits = (amount) => `${amount.toFixed(2)} ${CURRENCY}`;
 
-function orderTotal() {
+function foodSubtotal() {
   const size = findById(SIZES, order.size);
   if (!size) return 0;
-  return size.price + order.toppings.length * TOPPING_PRICE;
+  return order.toppings.reduce((sum, id) => sum + findById(TOPPINGS, id).price, size.price);
+}
+
+function orderTotal() {
+  return foodSubtotal() * (1 + GRATUITY_RATE);
 }
 
 // ---------- Build inputs from data.js ----------
 
 function buildInputs() {
-  $("#orientation-id").textContent = HENCHMAN_ID;
+  drawUncopyableText($("#orientation-id"), HENCHMAN_ID, { color: "#5a2206" }); // VIOLATION #2
 
   $("#size-options").innerHTML = SIZES.map((s) => `
     <label class="option">
@@ -78,7 +82,9 @@ function setSector(number) {
   });
 }
 
-function summaryHTML() {
+// includeTotal is false for the live sidebar (no totals before payment)
+// and true for the confirmation screen.
+function summaryHTML(includeTotal = false) {
   const size = findById(SIZES, order.size);
   const crust = findById(CRUSTS, order.crust);
   const toppings = order.toppings.map((id) => findById(TOPPINGS, id).name);
@@ -88,7 +94,7 @@ function summaryHTML() {
     <dt>Crust</dt><dd>${crust ? crust.name : "—"}</dd>
     <dt>Toppings</dt><dd>${toppings.length ? toppings.join(", ") : "—"}</dd>
     <dt>Delivery</dt><dd>${sector ? `Sector ${sector.number}: ${sector.name}` : "—"}</dd>
-    <dt>Total</dt><dd>${formatCredits(orderTotal())}</dd>`;
+    ${includeTotal ? `<dt>Total paid</dt><dd>${formatCredits(orderTotal())}</dd>` : ""}`;
 }
 
 function renderSummary() {
@@ -124,6 +130,9 @@ const validators = {
   toppings: () => (order.toppings.length ? null : 4),
   sector: () => (order.sector ? null : 5),
   payment: () => {
+    if (!formulaMatchesCharges()) return 8;
+    const loaded = parseNumber($("#payment-amount").value);
+    if (Number.isNaN(loaded) || Math.abs(loaded - orderTotal()) > 0.011) return 9;
     if (normalizeId($("#payment-id").value) !== HENCHMAN_ID) return 6;
     if (!order.size || !order.crust || !order.toppings.length || !order.sector) return 7;
     return null;
@@ -144,11 +153,28 @@ function clearError(screenName) {
 
 const onEnter = {
   payment: () => {
-    $("#payment-total").textContent = formatCredits(orderTotal());
+    // Itemized charges (bottom of page). No subtotal, gratuity amount, or total.
+    const size = findById(SIZES, order.size);
+    const rows = [];
+    if (size) rows.push([`${size.name} pizza`, size.price.toFixed(2)]);
+    order.toppings.forEach((id) => {
+      const t = findById(TOPPINGS, id);
+      rows.push([t.name, t.price.toFixed(2)]);
+    });
+    rows.push([
+      "Minion Hazard Gratuity (mandatory)",
+      `${Math.round(GRATUITY_RATE * 100)}% of all items above`,
+    ]);
+    $("#payment-charges").innerHTML =
+      `<thead><tr><th>Item</th><th>Evil Credits</th></tr></thead>` +
+      `<tbody>${rows.map(([item, price]) =>
+        `<tr><td>${item}</td><td>${price}</td></tr>`).join("")}</tbody>`;
+    buildFormula();
+    $("#charges-panel").open = false;
   },
   confirmation: () => {
     $("#order-number").textContent = order.number;
-    $("#confirmation-summary").innerHTML = summaryHTML();
+    $("#confirmation-summary").innerHTML = summaryHTML(true);
   },
 };
 
@@ -210,6 +236,99 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && event.target.matches("input[type='text']")) goNext();
 });
+
+// VIOLATION #2: block pasting into the ID fields so the ID must be recalled.
+["#login-id", "#payment-id"].forEach((selector) => {
+  ["paste", "drop"].forEach((type) => {
+    $(selector).addEventListener(type, (event) => event.preventDefault());
+  });
+});
+
+// ---------- Evil Transfer Formula (payment screen) ----------
+// One blank box per charge, plus a gratuity-percentage box. ENTER computes the
+// result and loads it into the read-only amount field (supports VIOLATION #3).
+
+const parseNumber = (value) => parseFloat(String(value).replace(/[^0-9.]/g, ""));
+
+function expectedCharges() {
+  const size = findById(SIZES, order.size);
+  const prices = size ? [size.price] : [];
+  order.toppings.forEach((id) => prices.push(findById(TOPPINGS, id).price));
+  return prices;
+}
+
+function buildFormula() {
+  const count = expectedCharges().length;
+  const boxes = Array.from({ length: count }, (_, i) =>
+    `<input class="formula-box" data-item type="text" inputmode="decimal"
+      autocomplete="off" aria-label="Charge ${i + 1}">`).join('<span class="formula-op">+</span>');
+  $("#formula-row").innerHTML =
+    `<span class="formula-op">(</span>${boxes}<span class="formula-op">)</span>` +
+    `<span class="formula-op">× ( 1 +</span>` +
+    `<input class="formula-box" id="formula-gratuity" type="text" inputmode="decimal"
+      autocomplete="off" aria-label="Gratuity percent">` +
+    `<span class="formula-op">÷ 100 )</span>`;
+  $("#payment-amount").value = "";
+}
+
+function formulaValues() {
+  return {
+    items: $$("[data-item]").map((box) => parseNumber(box.value)),
+    gratuity: parseNumber($("#formula-gratuity").value),
+  };
+}
+
+function loadFormula() {
+  const { items, gratuity } = formulaValues();
+  if (items.some(Number.isNaN) || Number.isNaN(gratuity)) {
+    $("#payment-amount").value = "";
+    return;
+  }
+  const result = items.reduce((a, b) => a + b, 0) * (1 + gratuity / 100);
+  $("#payment-amount").value = result.toFixed(2);
+}
+
+// The formula passes only if the boxes hold exactly the listed prices (any order)
+// and the gratuity is the listed percentage.
+function formulaMatchesCharges() {
+  const { items, gratuity } = formulaValues();
+  const expected = expectedCharges().slice().sort((a, b) => a - b);
+  const typed = items.slice().sort((a, b) => a - b);
+  const itemsOk = typed.length === expected.length &&
+    typed.every((value, i) => Math.abs(value - expected[i]) < 0.005);
+  return itemsOk && Math.abs(gratuity - GRATUITY_RATE * 100) < 0.005;
+}
+
+document.addEventListener("click", (event) => {
+  if (event.target.closest("#formula-load")) loadFormula();
+});
+
+// Enter inside a formula box runs the formula (instead of submitting the page).
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && event.target.matches(".formula-box")) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    loadFormula();
+  }
+}, true);
+
+// No pasting into formula boxes: prices must be carried in memory (VIOLATION #3).
+document.addEventListener("paste", (event) => {
+  if (event.target.matches(".formula-box")) event.preventDefault();
+});
+document.addEventListener("drop", (event) => {
+  if (event.target.matches(".formula-box")) event.preventDefault();
+});
+
+// Auto-collapsing charges (supports VIOLATION #3): the itemized list closes
+// itself whenever it scrolls out of view, so every trip back down to read a
+// price means opening it again.
+const chargesPanel = $("#charges-panel");
+new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting && chargesPanel.open) chargesPanel.open = false;
+  });
+}).observe(chargesPanel);
 
 // ---------- Start ----------
 

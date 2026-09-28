@@ -111,6 +111,14 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
 
 .actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
 
+/* VIOLATION #4 (Perception 2: be consistent): a different Next position per screen. */
+.actions-top-right { justify-content: flex-end; margin: 0 0 0.5rem; }
+.actions-split { justify-content: space-between; }
+.actions-top { margin: 0 0 1rem; }
+.actions-center { justify-content: center; margin: 0 0 1rem; max-width: 480px; }
+.inline-control { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.inline-control select { flex: 1 1 200px; }
+
 .btn {
   padding: 0.6rem 1.2rem;
   font: inherit;
@@ -119,7 +127,10 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
   background: var(--surface);
   cursor: pointer;
 }
-.btn.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+/* VIOLATION #5 (Attention 2: automatic processing / Stroop):
+   forward buttons are red ("stop"), Back buttons are green ("go"). */
+.btn.primary { background: #c62828; color: #fff; border-color: #c62828; }
+.btn.back { background: #2e7d32; color: #fff; border-color: #2e7d32; }
 .btn:focus-visible, .sector-tile:focus-visible, input:focus-visible, select:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
@@ -129,16 +140,32 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
 
 .error { color: var(--error); min-height: 1.5em; margin: 0.5rem 0 0; }
 
-/* ---------- Orientation ID card ---------- */
+/* ---------- Orientation ---------- */
 
-.id-card {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  border: 1px dashed var(--border);
+/* VIOLATION #1 (Reading: avoid text on noisy background).
+   A busy CSS "pizza" (pepperoni, olives, basil on cheese) behind
+   warm red/brown/orange text. Hard to read, but still readable. */
+.screen-orientation.active {
+  margin: -1.5rem;
+  padding: 1.5rem;
   border-radius: 8px;
+  color: #7a2e0e;
+  background-color: #f4b63f;
+  background-image:
+    radial-gradient(circle at 20% 30%, #b8321f 0 18px, transparent 19px),
+    radial-gradient(circle at 70% 65%, #c23a24 0 22px, transparent 23px),
+    radial-gradient(circle at 45% 85%, #a92c1b 0 14px, transparent 15px),
+    radial-gradient(circle at 85% 20%, #2b2016 0 6px, transparent 7px),
+    radial-gradient(circle at 35% 55%, #2b2016 0 5px, transparent 6px),
+    radial-gradient(ellipse at 60% 40%, #3f7d2a 0 7px, transparent 8px),
+    radial-gradient(circle at 10% 75%, #f7d774 0 26px, transparent 27px),
+    radial-gradient(circle at 55% 10%, #e8952f 0 20px, transparent 21px);
+  background-size: 140px 120px, 170px 150px, 110px 130px, 90px 80px,
+                   75px 95px, 120px 100px, 160px 140px, 130px 110px;
 }
-.id-card p { margin: 0.25rem 0; }
-.id-value { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.05em; }
+.screen-orientation h1 { color: #c2410c; }
+
+.orientation-id-line canvas { vertical-align: middle; }
 
 /* ---------- Sector map ---------- */
 
@@ -182,3 +209,76 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
 .table-wrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; margin: 0.5rem 0 1.5rem; }
 th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border); }
+
+/* ---------- Payment: itemized charges + transfer formula ---------- */
+
+.charges { max-width: 420px; }
+
+.charges-panel {
+  max-width: 460px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.charges-panel summary {
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.charges-panel[open] summary { border-bottom: 1px solid var(--border); }
+.charges-panel .table-wrap { padding: 0 1rem; }
+.charges td:last-child, .charges th:last-child { text-align: right; }
+
+.formula {
+  margin-top: 1rem;
+  padding: 1rem;
+  color: #f1f1f1;
+  background: #2b2b33;
+  border-radius: 10px;
+}
+.formula-title { margin: 0 0 0.75rem; font-weight: 700; }
+.formula-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.formula-op { font-size: 1.2rem; font-weight: 700; }
+.formula input.formula-box {
+  width: 5.5rem;
+  padding: 0.45rem 0.5rem;
+  font: inherit;
+  text-align: right;
+  color: #111;
+  background: #fff;
+  border: 1px solid #888;
+  border-radius: 4px;
+}
+.formula input.formula-box:focus-visible { outline: 3px solid #c8ffb0; outline-offset: 1px; }
+.formula-enter {
+  display: block;
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.6rem;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: #6b5b2a;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.formula-enter:focus-visible { outline: 3px solid #c8ffb0; outline-offset: 2px; }
+
+#payment-amount[readonly] { background: #f0f0ec; cursor: not-allowed; }
+
+/* VIOLATION #3: the terms block pushes the charges far below the formula,
+   taller than any screen, so they're never visible at the same time. */
+.transfer-terms {
+  min-height: 140vh;
+  margin: 2.5rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+.transfer-terms h2 { font-size: 1.1rem; }

@@ -12,7 +12,7 @@
     <p><a href="index.html">Return to ordering</a></p>
 
     <h2>Forgotten Henchman ID</h2>
-    <p id="hb-id"></p>
+    <p>Your Henchman ID is: <canvas id="hb-id" role="img" aria-label="Henchman ID" style="vertical-align: middle;"></canvas></p>
 
     <h2>Crust classifications</h2>
     <div class="table-wrap"><table id="hb-crusts"></table></div>
@@ -28,13 +28,14 @@
   </main>
 
   <script src="js/data.js"></script>
+  <script src="js/render-id.js"></script>
   <script>
     // Builds the Handbook from data.js so it always matches the site.
     const table = (headers, rows) =>
       `<thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>` +
       `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
 
-    document.getElementById("hb-id").textContent = `Your Henchman ID is ${HENCHMAN_ID}.`;
+    drawUncopyableText(document.getElementById("hb-id"), HENCHMAN_ID, { color: "#1f1f1f" });
     document.getElementById("hb-crusts").innerHTML =
       table(["Crust", "Classification"], CRUSTS.map((c) => [c.name, c.codename]));
     document.getElementById("hb-toppings").innerHTML =
