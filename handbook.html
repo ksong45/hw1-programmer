@@ -7,35 +7,42 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main>
+  <main class="handbook" style="max-width: 820px; margin: 2rem auto;">
     <h1>Henchman Handbook</h1>
-
-    <section id="henchman-id">
-      <h2>Forgotten Henchman ID</h2>
-      <p>Placeholder: ID in fine print.</p>
-    </section>
-
-    <section id="crusts">
-      <h2>Crust Classifications</h2>
-      <p>Placeholder: Thin Veneer, Standard Slab, Deep Abyss, Stuffed Dungeon.</p>
-    </section>
-
-    <section id="toppings">
-      <h2>Topping Codenames</h2>
-      <p>Placeholder: codename table.</p>
-    </section>
-
-    <section id="sectors">
-      <h2>Lair Sectors</h2>
-      <p>Placeholder: sector legend.</p>
-    </section>
-
-    <section id="error-codes">
-      <h2>Requisition Error Codes</h2>
-      <p>Placeholder: error code table.</p>
-    </section>
-
     <p><a href="index.html">Return to ordering</a></p>
+
+    <h2>Forgotten Henchman ID</h2>
+    <p id="hb-id"></p>
+
+    <h2>Crust classifications</h2>
+    <div class="table-wrap"><table id="hb-crusts"></table></div>
+
+    <h2>Topping codenames</h2>
+    <div class="table-wrap"><table id="hb-toppings"></table></div>
+
+    <h2>Lair sectors</h2>
+    <div class="table-wrap"><table id="hb-sectors"></table></div>
+
+    <h2>Requisition error codes</h2>
+    <div class="table-wrap"><table id="hb-errors"></table></div>
   </main>
+
+  <script src="js/data.js"></script>
+  <script>
+    // Builds the Handbook from data.js so it always matches the site.
+    const table = (headers, rows) =>
+      `<thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>` +
+      `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>`;
+
+    document.getElementById("hb-id").textContent = `Your Henchman ID is ${HENCHMAN_ID}.`;
+    document.getElementById("hb-crusts").innerHTML =
+      table(["Crust", "Classification"], CRUSTS.map((c) => [c.name, c.codename]));
+    document.getElementById("hb-toppings").innerHTML =
+      table(["Topping", "Codename"], TOPPINGS.map((t) => [t.name, t.codename]));
+    document.getElementById("hb-sectors").innerHTML =
+      table(["Sector", "Location"], SECTORS.map((s) => [s.number, s.name]));
+    document.getElementById("hb-errors").innerHTML =
+      table(["Code", "Meaning"], Object.entries(ERROR_CODES));
+  </script>
 </body>
 </html>

@@ -1,26 +1,184 @@
-/* Pizzeria Antiusabilious: base styles.
-   The (intentionally awful) lair theme gets built on top of this later. */
+/* Pizzeria Antiusabilious: clean baseline styles.
+   This is the "good UX" starting point. Break it on purpose later. */
+
+:root {
+  --bg: #f6f6f4;
+  --surface: #ffffff;
+  --text: #1f1f1f;
+  --muted: #666666;
+  --border: #d6d6d2;
+  --accent: #2f5d8a;
+  --accent-text: #ffffff;
+  --error: #b3261e;
+  --selected: #e3edf7;
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ---------- Header / footer ---------- */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.brand { margin: 0; font-weight: 700; }
+.progress { margin: 0; color: var(--muted); }
+
+.site-footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* ---------- Layout ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.layout:has(.summary[hidden]) { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
+
+@media (max-width: 760px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
 }
 
 main {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
 /* Screen switching: only the active screen is visible */
 .screen { display: none; }
 .screen.active { display: block; }
 
-footer {
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.85rem;
+h1 { margin-top: 0; font-size: 1.6rem; }
+
+/* ---------- Form controls ---------- */
+
+label { display: block; font-weight: 600; margin: 1rem 0 0.35rem; }
+
+input[type="text"], select {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
 }
+
+fieldset { border: none; padding: 0; margin: 1rem 0 0; }
+legend { font-weight: 600; margin-bottom: 0.5rem; }
+
+.options { display: grid; gap: 0.5rem; }
+.topping-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  font-weight: 400;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.option:has(input:checked) { background: var(--selected); border-color: var(--accent); }
+.option .muted { margin-left: auto; }
+
+.muted { color: var(--muted); }
+
+/* ---------- Buttons ---------- */
+
+.actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.btn:focus-visible, .sector-tile:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Errors ---------- */
+
+.error { color: var(--error); min-height: 1.5em; margin: 0.5rem 0 0; }
+
+/* ---------- Orientation ID card ---------- */
+
+.id-card {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+.id-card p { margin: 0.25rem 0; }
+.id-value { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.05em; }
+
+/* ---------- Sector map ---------- */
+
+.sector-map {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+  max-width: 480px;
+}
+.sector-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.sector-tile.selected { background: var(--selected); border-color: var(--accent); }
+.sector-number { font-weight: 700; font-size: 1.2rem; }
+
+/* ---------- Order summary ---------- */
+
+.summary {
+  align-self: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+.summary h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+
+.summary-list dt { font-weight: 600; margin-top: 0.5rem; }
+.summary-list dd { margin: 0; }
+
+/* ---------- Handbook tables ---------- */
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; margin: 0.5rem 0 1.5rem; }
+th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border); }

@@ -7,71 +7,132 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main id="app">
+  <header class="site-header">
+    <p class="brand">Pizzeria Antiusabilious</p>
+    <p class="progress" id="progress" aria-live="polite"></p>
+  </header>
 
-    <!-- Screen 0: Orientation (shows Henchman ID once) -->
-    <section class="screen active" data-screen="orientation">
-      <h1>Orientation</h1>
-      <p>Placeholder: welcome text from Dr. Antiusabilious with the Henchman ID buried inside.</p>
-      <button data-go="login">Next</button>
-    </section>
+  <div class="layout">
+    <main id="app">
 
-    <!-- Screen 1: Identity Verification -->
-    <section class="screen" data-screen="login">
-      <h1>Identity Verification</h1>
-      <p>Placeholder: Henchman ID field.</p>
-      <button data-go="size">Next</button>
-    </section>
+      <!-- Screen 0: Orientation -->
+      <section class="screen active" data-screen="orientation">
+        <h1>Welcome to the Lair Cafeteria</h1>
+        <p>Dr. Antiusabilious feeds his henchmen well. Use this terminal to order a pizza delivered anywhere in the lair.</p>
+        <div class="id-card">
+          <p>Your Henchman ID</p>
+          <p class="id-value" id="orientation-id"></p>
+          <p class="muted">You'll need it to log in and to pay.</p>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn primary" data-action="next">Start order</button>
+        </div>
+      </section>
 
-    <!-- Screen 2: Portion Allocation (size) -->
-    <section class="screen" data-screen="size">
-      <h1>Portion Allocation</h1>
-      <p>Placeholder: reversed "rations" slider.</p>
-      <button data-go="crust">Next</button>
-    </section>
+      <!-- Screen 1: Identity Verification -->
+      <section class="screen" data-screen="login">
+        <h1>Log in</h1>
+        <label for="login-id">Henchman ID</label>
+        <input id="login-id" type="text" autocomplete="off">
+        <p class="error" data-error aria-live="assertive"></p>
+        <div class="actions">
+          <button type="button" class="btn" data-action="back">Back</button>
+          <button type="button" class="btn primary" data-action="next">Log in</button>
+        </div>
+      </section>
 
-    <!-- Screen 3: Crust Classification -->
-    <section class="screen" data-screen="crust">
-      <h1>Crust Classification</h1>
-      <p>Placeholder: free-text crust field.</p>
-      <button data-go="toppings">Next</button>
-    </section>
+      <!-- Screen 2: Portion Allocation (size) -->
+      <section class="screen" data-screen="size">
+        <h1>Choose a size</h1>
+        <fieldset>
+          <legend>Size</legend>
+          <div id="size-options" class="options"></div>
+        </fieldset>
+        <p class="error" data-error aria-live="assertive"></p>
+        <div class="actions">
+          <button type="button" class="btn" data-action="back">Back</button>
+          <button type="button" class="btn primary" data-action="next">Next</button>
+        </div>
+      </section>
 
-    <!-- Screen 4: Topping Arsenal -->
-    <section class="screen" data-screen="toppings">
-      <h1>Topping Arsenal</h1>
-      <p>Placeholder: 40+ codename toppings.</p>
-      <button data-go="sector">Next</button>
-    </section>
+      <!-- Screen 3: Crust Classification -->
+      <section class="screen" data-screen="crust">
+        <h1>Choose a crust</h1>
+        <label for="crust-select">Crust</label>
+        <select id="crust-select"></select>
+        <p class="error" data-error aria-live="assertive"></p>
+        <div class="actions">
+          <button type="button" class="btn" data-action="back">Back</button>
+          <button type="button" class="btn primary" data-action="next">Next</button>
+        </div>
+      </section>
 
-    <!-- Screen 5: Delivery Sector -->
-    <section class="screen" data-screen="sector">
-      <h1>Delivery Sector</h1>
-      <p>Placeholder: lair map + sector dropdown.</p>
-      <button data-go="payment">Next</button>
-    </section>
+      <!-- Screen 4: Topping Arsenal -->
+      <section class="screen" data-screen="toppings">
+        <h1>Choose toppings</h1>
+        <fieldset>
+          <legend>Toppings</legend>
+          <div id="topping-options" class="options topping-grid"></div>
+        </fieldset>
+        <p class="error" data-error aria-live="assertive"></p>
+        <div class="actions">
+          <button type="button" class="btn" data-action="back">Back</button>
+          <button type="button" class="btn primary" data-action="next">Next</button>
+        </div>
+      </section>
 
-    <!-- Screen 6: Evil Credit Transfer (payment) -->
-    <section class="screen" data-screen="payment">
-      <h1>Evil Credit Transfer</h1>
-      <p>Placeholder: re-enter ID, stale summary, error codes.</p>
-      <button data-go="confirmation">Next</button>
-    </section>
+      <!-- Screen 5: Delivery Sector -->
+      <section class="screen" data-screen="sector">
+        <h1>Choose a delivery sector</h1>
+        <p>Pick a sector on the lair map or from the list.</p>
+        <div id="sector-map" class="sector-map"></div>
+        <label for="sector-select">Delivery sector</label>
+        <select id="sector-select"></select>
+        <p class="error" data-error aria-live="assertive"></p>
+        <div class="actions">
+          <button type="button" class="btn" data-action="back">Back</button>
+          <button type="button" class="btn primary" data-action="next">Next</button>
+        </div>
+      </section>
 
-    <!-- Screen 7: Confirmation -->
-    <section class="screen" data-screen="confirmation">
-      <h1>Requisition Terminated</h1>
-      <p>Placeholder: red "terminated" banner with fine print.</p>
-      <button data-go="orientation" data-reset>Start over</button>
-    </section>
+      <!-- Screen 6: Evil Credit Transfer (payment) -->
+      <section class="screen" data-screen="payment">
+        <h1>Pay with Evil Credits</h1>
+        <p>Total due: <strong id="payment-total"></strong></p>
+        <label for="payment-id">Confirm your Henchman ID</label>
+        <input id="payment-id" type="text" autocomplete="off">
+        <p class="error" data-error aria-live="assertive"></p>
+        <div class="actions">
+          <button type="button" class="btn" data-action="back">Back</button>
+          <button type="button" class="btn primary" data-action="next">Pay and place order</button>
+        </div>
+      </section>
 
-  </main>
+      <!-- Screen 7: Confirmation -->
+      <section class="screen" data-screen="confirmation">
+        <h1>Order placed</h1>
+        <p>Your order number is <strong id="order-number"></strong>. A minion is on the way.</p>
+        <dl id="confirmation-summary" class="summary-list"></dl>
+        <div class="actions">
+          <button type="button" class="btn primary" data-action="restart">Start a new order</button>
+        </div>
+      </section>
 
-  <footer>
+    </main>
+
+    <!-- Live order summary (shown on screens 2–6) -->
+    <aside class="summary" id="summary" hidden>
+      <h2>Your order</h2>
+      <dl id="summary-list" class="summary-list"></dl>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
     <a href="handbook.html">Henchman Handbook</a> |
     <a href="docs.html">Documentation</a>
   </footer>
 
+  <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
