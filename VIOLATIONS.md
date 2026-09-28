@@ -17,6 +17,13 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 | 3 | Payment | Memory 1 | Present all info needed for a task on a single screen | Built |
 | 4 | All screens | Perception 2 | Be consistent (place controls in consistent locations) | Built |
 | 5 | All screens | Attention 2 | Automatic processing / Stroop effect (counterintuitive colors) | Built |
+| 6 | Crust | Memory 2 | See and choose is easier than recall and type | Built |
+| 7 | Crust | Attention 2 | Banner blindness | Built |
+| 8 | Toppings | Thinking (Decision Making) | Choice overload | Built |
+| 9 | Toppings | Memory 1 | Changing the ordering of information (consistency / power law of learning) | Built |
+| 10 | Toppings | Perception 1 | Distinguish colors by saturation and brightness, as well as hue | Built |
+| 11 | All screens (header) | Thinking (Problem Solving) | Prominently indicate system status and progress (setting expectations) | Built |
+| 12 | Login → Payment | Attention 1 | Multitasking = serial task switching (interruptions) | Built |
 
 ### #1: Pizza background behind warm text (Reading, avoid text on noisy background)
 - **What changed:** The Orientation screen sits on a busy CSS pizza pattern (pepperoni, olives, basil, cheese). Heading and body text are red, brown, and orange, the same palette as the pattern.
@@ -69,12 +76,55 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 - **Draft write-up:** Color meanings like green = go and red = stop are processed automatically, without conscious attention, the same mechanism the Stroop effect demonstrates. Here, the color and the meaning conflict: the button that moves users forward carries the "stop" color, and the one that takes them backward carries the "go" color. Users must override their automatic response on every screen, and those who act on it go backward.
 - **Screenshot:** Any screen with both buttons visible (Size shows both clearly).
 
+### #6: Free-text crust classification (Memory 2, see and choose is easier than recall and type)
+- **What changed:** The crust dropdown was replaced by a text field labeled "State your crust classification." There's no list, hint, or autocomplete. Only the four exact classifications are accepted (case and extra spaces are ignored): Thin Veneer, Standard Slab, Deep Abyss, Stuffed Dungeon. Typing a normal name like "thin" gives Error 3.
+- **Files:** `index.html` (crust screen input), `js/app.js` (crust validator; removed the dropdown builder and change handler), `js/data.js` (error 3 text).
+- **Draft write-up:** Recognition (choosing from visible options) is far easier than recall (producing an answer from memory). The original dropdown let users recognize "Thin." Now they must recall an exact, unfamiliar term they've never been shown, so the task goes from a one-second choice to a search for the valid answers.
+- **Screenshot:** Crust screen with an empty field and Error 3 after typing "thin."
+- **Where the answers are:** the right-rail "HOT CRUST DEALS" ad (see #7) and the Handbook's crust table.
+
+### #7: Crust answers disguised as an ad among other ads (Attention 2, banner blindness)
+- **What changed:** On the Crust screen, the right rail (normally the order summary) shows three ad-styled boxes: "Shark Tank Timeshares," "🔥 HOT CRUST DEALS 🔥," and "Laser Lab is HIRING." The middle ad lists the four valid crust classifications as if they were promotions. A leaderboard-style "MINION MONTHLY" ad sits above the heading to reinforce that this page has ads.
+- **Files:** `index.html` (`.leaderboard-ad`, `#ad-rail`), `js/app.js` (`AD_RAIL_SCREENS`; the summary is hidden on Crust), `css/style.css` (ad styles).
+- **Draft write-up:** Users learn to ignore elements that appear where ads usually go (the right rail, the top of the page) or that look like ads. Here the only on-screen source of the answer is styled and placed exactly like an ad, surrounded by real-looking decoy ads. Users stare at an empty text field, go hunting in the Handbook, and miss that the answer was beside them the whole time.
+- **Screenshot:** Full Crust screen; circle the crust ad and point to the empty field.
+
+### #8: 84 unorganized toppings (Thinking, choice overload)
+- **What changed:** The list grew from 42 to 84 toppings, including near-duplicates of the target (Turkey, Spicy, Mini, and Cup-and-char pepperoni). They're shown as a wrapping jumble of pills with no categories, headings, search, or filters.
+- **Files:** `js/data.js` (42 new toppings with prices and codenames), `css/style.css` (`.topping-grid` pill layout), `index.html` (comment).
+- **Draft write-up:** The jam study showed that people facing many options struggle to decide (choice overload), and the lecture shows filters as the fix: they support non-compensatory strategies by letting users narrow down to what matters. This screen offers 84 options with no way to narrow them, plus several pepperoni variants that look like acceptable matches, so users satisficing on "pepperoni" can easily grab the wrong one.
+- **Screenshot:** Full toppings list (zoomed out), with the four pepperoni variants circled.
+
+### #9: Toppings reshuffle on every visit (Memory 1, changing the ordering of information)
+- **What changed:** Every time the Toppings screen is shown (including coming back from Sector), the 84 items are put in a new random order. Checked items stay checked.
+- **Files:** `js/app.js` (`shuffleToppings`, run from `onEnter.toppings`).
+- **Draft write-up:** The long-term memory lecture shows how unexpected changes to the ordering of information break the benefits of practice (the power law of learning). Here, any location a user learns ("Pepperoni was in the middle, near Artichoke") is wiped out on the next visit, so returning to fix or check a topping means scanning 84 items from scratch.
+- **Screenshot:** Two screenshots of the same screen on two visits, with Pepperoni circled in different places.
+
+### #10: Selected toppings are barely visible (Perception 1, distinguish colors by saturation and brightness)
+- **What changed:** Checkboxes are tiny and pale, and a checked topping changes only from white to a faint cream (`#fbf8f3`) with an almost identical border. The order summary is hidden on the Toppings screen, so there's no other way to see what's selected.
+- **Files:** `css/style.css` (VIOLATION #10 block), `js/app.js` (Toppings removed from `SUMMARY_SCREENS`).
+- **Draft write-up:** The color guidelines say to distinguish states by saturation and brightness, not just subtle hue, because pale colors on small patches are the hardest to tell apart. Here the selected and unselected states are both near-white, on a small patch, with almost no contrast. Users can't confirm they picked Pepperoni, and those who click again to "make sure" uncheck it.
+- **Screenshot:** A zoomed crop with Pepperoni checked beside unchecked items; label which one is selected.
+
+### #11: Honest step count, misleading progress bar (Thinking, prominently indicate system status and progress)
+- **What changed:** The header shows an accurate "Step X of 6" next to a progress bar and percentage that misrepresent the remaining work: 12% at step 1, 31% at step 2, then **99%** from step 3 onward, creeping to 99.2%, 99.5%, and 99.8%. The values are fixed, so every user sees the same thing.
+- **Files:** `index.html` (header `.progress-wrap`), `js/app.js` (`PROGRESS_PERCENT`, `showScreen`), `css/style.css` (progress styles).
+- **Draft write-up:** The problem-solving guidelines say to prominently indicate status and progress, and the decision-making lecture shows how setting expectations helps users estimate interaction cost. This bar technically shows progress but sets the wrong expectation: at 99% "complete," users believe they're one click from done while four screens, including the longest (payment), remain. The mismatch between "Step 3 of 6" and "99%" also makes users doubt which indicator to trust.
+- **Screenshot:** The header at step 3 (99%) and at step 6 (99.8%).
+
+### #12: Dr. A's chat interrupts every step (Attention 1, multitasking / serial task switching)
+- **What changed:** The first time each step (Login through Payment) is shown, a chat window from "Dr. Antiusabilious" opens over a dimmed screen and blocks the page until it's closed with ✕ (or Esc). Each step has its own message, and several contain numbers and codes: locker combo 4-8-2-1, shark feeding times, Form 7Q-22B, "closed until 18:30."
+- **Guardrails (keeps it within the rubric):** deterministic (same message, once per step, no timers or randomness); the ✕ is normal-sized, visible, and automatically focused; Esc also closes it. It never reappears when revisiting a step.
+- **Files:** `index.html` (`#chat-overlay`), `js/data.js` (`CHAT_MESSAGES`), `js/app.js` (`openChat`, `closeChat`, called from `showScreen`), `css/style.css` (chat styles).
+- **Draft write-up:** The attention lecture shows that multitasking is really serial task switching: every switch costs time, raises errors, and can cause users to miss things. Here, each new step starts with a forced switch to an unrelated conversation, then a switch back, where the user must reorient to a screen they haven't read yet. The messages also load working memory with irrelevant numbers at exactly the moments users are holding the Henchman ID or prices, so the interruption costs more than the click to dismiss it.
+- **Screenshot:** Login with the chat open (the locker combo competes with the ID); optionally Payment's message, which references both.
+
 ---
 
 ## Backlog (candidates, not yet decided)
 
 ### Orientation
-- ID inside an ad-styled right-rail box: Attention 2, banner blindness *(tried as a fake ad, then removed; available to reuse)*
 - Long "ordering procedure" shown once, never again: Memory 1, make instructions accessible during a task *(deferred)*
 - Centered or right-aligned text: Reading, avoid centered or right-aligned text *(deferred; could go on another screen)*
 - Confusable characters in the ID (O/0, I/1): Perception 2, bottom-up perception *(optional)*
@@ -93,20 +143,16 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 - Price grouped in the wrong size's box: Perception 2, common region *(conflicts with the slider idea)*
 
 ### Crust
-- Free-text "crust classification": Memory 2, see and choose is easier than recall and type
 - Jargon crust names: Reading, avoid uncommon and unfamiliar vocabulary
 - Red text on saturated blue: Perception 1, separate strong opponent colors
 - "Most popular" badge on the wrong crust: Thinking, provide unbiased data
 
 ### Toppings *(too many for one screen; pick about 5)*
-- 42 items: Thinking, choice overload (supporting concept)
 - Every codename starts with "Operation ...": Reading, avoid redundant or repetitive text
 - Decoys listed before the real one: Thinking, satisficing and good-enough processing (supporting concept)
 - Checkbox closer to the wrong label: Perception 2, proximity
 - Fake "End of Arsenal" with Pepperoni below it: Perception 2, illusion of completeness
-- Selected state is a faint pastel: Perception 1, distinguish colors by saturation and brightness
 - Arm/Disarm mode with a color-only dot: Memory 1, caution using interaction modes
-- Order reshuffles on every visit: Memory 1, changing ordering of information
 - "View dossier" instead of thumbnails: Memory 2, use thumbnail images
 - Pointless confirm dialog on each topping: Perception 1, dialog boxes (pairs with habituation at Payment)
 - Deep drill-down menu: Memory 1, provide navigation aids to hierarchies *(conflicts with the flat list)*
@@ -132,7 +178,6 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 - "REQUISITION TERMINATED" in red: Perception 2, avoid ambiguity
 
 ### Cross-cutting
-- No progress indicator: Thinking, prominently indicate system status and progress
 - Same heading on every screen: Memory 2, use visual cues to let users recognize where they are
 - Decoy buttons styled like Next: Perception 2, similarity
 - Reversed arrows on buttons: Attention 2, inconsistent use of symbols

@@ -3,7 +3,8 @@
 
 const SCREENS = ["orientation", "login", "size", "crust", "toppings", "sector", "payment", "confirmation"];
 const STEP_SCREENS = ["login", "size", "crust", "toppings", "sector", "payment"]; // counted in progress
-const SUMMARY_SCREENS = ["size", "crust", "toppings", "sector", "payment"];      // show order sidebar
+const SUMMARY_SCREENS = ["size", "sector", "payment"];  // show order sidebar (hidden on Toppings: VIOLATION #10)
+const AD_RAIL_SCREENS = ["crust"];                                               // VIOLATION #7
 
 let currentIndex = 0;
 
@@ -48,9 +49,6 @@ function buildInputs() {
       <span class="muted">${formatCredits(s.price)}</span>
     </label>`).join("");
 
-  $("#crust-select").innerHTML =
-    `<option value="">Select a crust</option>` +
-    CRUSTS.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
 
   $("#topping-options").innerHTML = TOPPINGS.map((t) => `
     <label class="option">
@@ -105,7 +103,6 @@ function renderSummary() {
 document.addEventListener("change", (event) => {
   const el = event.target;
   if (el.name === "size") order.size = el.value;
-  if (el.id === "crust-select") order.crust = el.value || null;
   if (el.name === "topping") {
     order.toppings = $$('input[name="topping"]:checked').map((box) => box.value);
   }
@@ -126,7 +123,13 @@ document.addEventListener("click", (event) => {
 const validators = {
   login: () => (normalizeId($("#login-id").value) === HENCHMAN_ID ? null : 1),
   size: () => (order.size ? null : 2),
-  crust: () => (order.crust ? null : 3),
+  // VIOLATION #6: the typed text must match a crust classification (case-insensitive).
+  crust: () => {
+    const typed = $("#crust-input").value.trim().replace(/\s+/g, " ").toLowerCase();
+    const match = CRUSTS.find((c) => c.codename.toLowerCase() === typed);
+    order.crust = match ? match.id : null;
+    return match ? null : 3;
+  },
   toppings: () => (order.toppings.length ? null : 4),
   sector: () => (order.sector ? null : 5),
   payment: () => {
@@ -151,7 +154,30 @@ function clearError(screenName) {
 
 // ---------- Screen hooks (run when a screen is shown) ----------
 
+// VIOLATION #11: the bar leaps to 99% after step 2, then creeps.
+const PROGRESS_PERCENT = {
+  login: 12,
+  size: 31,
+  crust: 99,
+  toppings: 99.2,
+  sector: 99.5,
+  payment: 99.8,
+};
+
+// VIOLATION #9: reshuffle the toppings every time the screen is shown.
+// (Checked state stays attached to each item.)
+function shuffleToppings() {
+  const box = $("#topping-options");
+  const items = [...box.children];
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  items.forEach((item) => box.appendChild(item));
+}
+
 const onEnter = {
+  toppings: shuffleToppings,
   payment: () => {
     // Itemized charges (bottom of page). No subtotal, gratuity amount, or total.
     const size = findById(SIZES, order.size);
@@ -189,14 +215,48 @@ function showScreen(index) {
   });
 
   const step = STEP_SCREENS.indexOf(name);
-  $("#progress").textContent = step >= 0 ? `Step ${step + 1} of ${STEP_SCREENS.length}` : "";
+  // VIOLATION #11: honest step count, misleading bar (fixed values, same every time).
+  const percent = name === "confirmation" ? 100 : PROGRESS_PERCENT[name];
+  $("#progress-wrap").hidden = percent === undefined;
+  if (percent !== undefined) {
+    $("#progress").textContent = name === "confirmation"
+      ? "Complete · 100%"
+      : `Step ${step + 1} of ${STEP_SCREENS.length} · ${percent}% complete`;
+    $("#progress-fill").style.width = percent + "%";
+  }
 
   $("#summary").hidden = !SUMMARY_SCREENS.includes(name);
+  $("#ad-rail").hidden = !AD_RAIL_SCREENS.includes(name);
   renderSummary();
 
   if (onEnter[name]) onEnter[name]();
+  openChat(name); // VIOLATION #12
   window.scrollTo(0, 0);
 }
+
+// ---------- Dr. A's chat (VIOLATION #12) ----------
+// Opens the first time each step is shown; must be closed (✕ or Esc) to continue.
+const chatSeen = new Set();
+
+function openChat(screenName) {
+  const message = CHAT_MESSAGES[screenName];
+  if (!message || chatSeen.has(screenName)) return;
+  chatSeen.add(screenName);
+  $("#chat-message").textContent = message;
+  $("#chat-overlay").hidden = false;
+  $("#chat-close").focus();
+}
+
+function closeChat() {
+  $("#chat-overlay").hidden = true;
+}
+
+document.addEventListener("click", (event) => {
+  if (event.target.closest("#chat-close")) closeChat();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !$("#chat-overlay").hidden) closeChat();
+});
 
 function placeOrder() {
   order.number = "LC-" + Math.floor(1000 + Math.random() * 9000);
@@ -234,7 +294,7 @@ document.addEventListener("click", (event) => {
 
 // Pressing Enter in a text field acts like the primary button.
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && event.target.matches("input[type='text']")) goNext();
+  if (event.key === "Enter" && event.target.matches("input[type='text']") && $("#chat-overlay").hidden) goNext();
 });
 
 // VIOLATION #2: block pasting into the ID fields so the ID must be recalled.

@@ -9,7 +9,12 @@
 <body>
   <header class="site-header">
     <p class="brand">Pizzeria Antiusabilious</p>
-    <p class="progress" id="progress" aria-live="polite"></p>
+    <!-- VIOLATION #11 (Thinking: prominently indicate system status and progress):
+         the step count is honest, but the bar jumps to 99% after step 2. -->
+    <div class="progress-wrap" id="progress-wrap" hidden>
+      <p class="progress" id="progress" aria-live="polite"></p>
+      <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
   </header>
 
   <div class="layout">
@@ -67,11 +72,20 @@
 
       <!-- Screen 3: Crust Classification -->
       <section class="screen" data-screen="crust">
+        <!-- Part of VIOLATION #7: a leaderboard-style ad across the top adds to
+             the "this page has ads" frame, so the right rail gets ignored. -->
+        <div class="leaderboard-ad" aria-label="Advertisement">
+          <span class="ad-label">Ad</span>
+          <strong>🐍 MINION MONTHLY</strong> · 12 issues of lair gossip for just 9.99 Evil Credits! <span class="ad-link">Subscribe ›</span>
+        </div>
+
         <h1>Choose a crust</h1>
-        <label for="crust-select">Crust</label>
+        <!-- VIOLATION #6 (Memory 2: see and choose is easier than recall and type):
+             no list of options; users must type an exact crust classification. -->
+        <label for="crust-input">State your crust classification</label>
         <!-- VIOLATION #4: Next sits inline, right beside the crust control. -->
         <div class="inline-control">
-          <select id="crust-select"></select>
+          <input id="crust-input" type="text" autocomplete="off" spellcheck="false">
           <button type="button" class="btn primary" data-action="next">Obey</button>
         </div>
         <p class="error" data-error aria-live="assertive"></p>
@@ -90,6 +104,10 @@
         <p class="error" data-error aria-live="assertive"></p>
         <fieldset>
           <legend>Toppings</legend>
+          <!-- VIOLATION #8 (Thinking: choice overload): 84 unorganized toppings, no categories or search.
+               VIOLATION #9 (Memory 1: changing ordering of information): reshuffled on every visit.
+               VIOLATION #10 (Perception 1: distinguish colors by saturation and brightness):
+               checked toppings are only a faint pastel. -->
           <div id="topping-options" class="options topping-grid"></div>
         </fieldset>
         <div class="actions">
@@ -187,12 +205,56 @@
       <h2>Your order</h2>
       <dl id="summary-list" class="summary-list"></dl>
     </aside>
+
+    <!-- VIOLATION #7 (Attention 2: banner blindness): on the Crust screen the
+         right rail holds three "ads". The middle one lists the only valid
+         crust classifications, disguised as a promotion. -->
+    <aside class="ad-rail" id="ad-rail" hidden aria-label="Sponsored content">
+      <div class="rail-ad rail-ad-sharks">
+        <p class="ad-label">Sponsored</p>
+        <p class="rail-ad-title">🦈 Shark Tank Timeshares</p>
+        <p>Own a week of waterfront property. Fins not included.</p>
+        <p class="ad-link">Learn more ›</p>
+      </div>
+      <div class="rail-ad rail-ad-crust">
+        <p class="ad-label">Sponsored</p>
+        <p class="rail-ad-title">🔥 HOT CRUST DEALS 🔥</p>
+        <p class="rail-ad-list">Thin Veneer ★ Standard Slab ★ Deep Abyss ★ Stuffed Dungeon</p>
+        <p>Limited time! While supplies last!</p>
+        <p class="ad-link">Shop now ›</p>
+      </div>
+      <div class="rail-ad rail-ad-hiring">
+        <p class="ad-label">Sponsored</p>
+        <p class="rail-ad-title">⚡ Laser Lab is HIRING</p>
+        <p>Competitive pay. Eyebrows optional.</p>
+        <p class="ad-link">Apply ›</p>
+      </div>
+    </aside>
   </div>
 
   <footer class="site-footer">
     <a href="handbook.html">Henchman Handbook</a> |
     <a href="docs.html">Documentation</a>
   </footer>
+
+  <!-- VIOLATION #12 (Attention 1: multitasking / task switching):
+       Dr. A's chat interrupts the first visit to every step and must be closed. -->
+  <div class="chat-overlay" id="chat-overlay" hidden>
+    <div class="chat-window" role="dialog" aria-modal="true" aria-labelledby="chat-title">
+      <div class="chat-header">
+        <span class="chat-avatar" aria-hidden="true">😈</span>
+        <div>
+          <p class="chat-name" id="chat-title">Dr. Antiusabilious</p>
+          <p class="chat-status">● online · watching</p>
+        </div>
+        <button type="button" class="chat-close" id="chat-close" aria-label="Close chat">✕</button>
+      </div>
+      <div class="chat-body">
+        <p class="chat-time">now</p>
+        <p class="chat-message" id="chat-message"></p>
+      </div>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/render-id.js"></script>

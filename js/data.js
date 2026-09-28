@@ -71,6 +71,51 @@ const TOPPINGS = [
   { id: "hothoney",    name: "Hot honey",          codename: "Operation Liquid Gold", price: 1.58 },
   { id: "chiliflakes", name: "Chili flakes",       codename: "Operation Red Confetti", price: 0.94 },
   { id: "bbq",         name: "BBQ drizzle",        codename: "Operation Brown Rain", price: 1.11 },
+
+  // VIOLATION #8 (choice overload): 42 more toppings, including
+  // near-duplicates of pepperoni, for 84 total.
+  { id: "turkeypep", name: "Turkey pepperoni", codename: "Operation Pale Disc", price: 1.79 },
+  { id: "spicypep", name: "Spicy pepperoni", codename: "Operation Hot Disc", price: 1.88 },
+  { id: "cuppep", name: "Cup-and-char pepperoni", codename: "Operation Curled Disc", price: 2.02 },
+  { id: "minipep", name: "Mini pepperoni", codename: "Operation Tiny Disc", price: 1.67 },
+  { id: "groundbeef", name: "Ground beef", codename: "Operation Crumbled Cow", price: 2.13 },
+  { id: "steak", name: "Steak strips", codename: "Operation Seared Ribbon", price: 2.58 },
+  { id: "pulledpork", name: "Pulled pork", codename: "Operation Shredded Oink", price: 2.29 },
+  { id: "hotdog", name: "Hot dog slices", codename: "Operation Ballpark Coins", price: 1.44 },
+  { id: "crab", name: "Crab", codename: "Operation Sideways Walker", price: 2.71 },
+  { id: "clams", name: "Clams", codename: "Operation Clamshell Protocol", price: 2.36 },
+  { id: "tuna", name: "Tuna", codename: "Operation Canned Ocean", price: 1.97 },
+  { id: "salmon", name: "Smoked salmon", codename: "Operation Pink River", price: 2.64 },
+  { id: "egg", name: "Egg", codename: "Operation Sunny Dome", price: 1.19 },
+  { id: "potato", name: "Potato", codename: "Operation Starch Vault", price: 1.07 },
+  { id: "sweetpotato", name: "Sweet potato", codename: "Operation Orange Vault", price: 1.26 },
+  { id: "carrot", name: "Carrots", codename: "Operation Orange Stick", price: 0.96 },
+  { id: "peas", name: "Peas", codename: "Operation Green Pellets", price: 0.88 },
+  { id: "cauliflower", name: "Cauliflower", codename: "Operation Pale Forest", price: 1.33 },
+  { id: "brussels", name: "Brussels sprouts", codename: "Operation Tiny Cabbage", price: 1.49 },
+  { id: "pumpkin", name: "Pumpkin", codename: "Operation Harvest Moon", price: 1.57 },
+  { id: "cherrytomato", name: "Cherry tomatoes", codename: "Operation Red Marbles", price: 1.39 },
+  { id: "roastedpepper", name: "Roasted red peppers", codename: "Operation Red Siren", price: 1.46 },
+  { id: "poblano", name: "Poblano", codename: "Operation Dark Flame", price: 1.28 },
+  { id: "habanero", name: "Habanero", codename: "Operation Orange Flame", price: 1.52 },
+  { id: "kimchi", name: "Kimchi", codename: "Operation Fermented Fury", price: 1.84 },
+  { id: "sauerkraut", name: "Sauerkraut", codename: "Operation Sour Shred", price: 1.13 },
+  { id: "pear", name: "Pear", codename: "Operation Gold Teardrop", price: 1.37 },
+  { id: "apple", name: "Apple", codename: "Operation Crisp Orb", price: 1.22 },
+  { id: "figs", name: "Figs", codename: "Operation Purple Pouch", price: 1.93 },
+  { id: "mango", name: "Mango", codename: "Operation Tropical Mutiny", price: 1.61 },
+  { id: "bluecheese", name: "Blue cheese", codename: "Operation Moldy Cloud", price: 1.78 },
+  { id: "cheddar", name: "Cheddar", codename: "Operation Orange Blanket", price: 1.34 },
+  { id: "provolone", name: "Provolone", codename: "Operation Smoky Blanket", price: 1.42 },
+  { id: "gouda", name: "Gouda", codename: "Operation Dutch Blanket", price: 1.59 },
+  { id: "vegancheese", name: "Vegan cheese", codename: "Operation Imposter Blanket", price: 1.71 },
+  { id: "tofu", name: "Tofu", codename: "Operation White Brick", price: 1.17 },
+  { id: "pesto", name: "Pesto drizzle", codename: "Operation Green Rain", price: 1.54 },
+  { id: "ranch", name: "Ranch drizzle", codename: "Operation White Rain", price: 1.08 },
+  { id: "truffle", name: "Truffle oil", codename: "Operation Earth Tears", price: 2.49 },
+  { id: "pickles", name: "Pickles", codename: "Operation Brine Coins", price: 0.92 },
+  { id: "walnuts", name: "Walnuts", codename: "Operation Brain Pebbles", price: 1.66 },
+  { id: "laseronion", name: "Laser-seared onions", codename: "Operation Burnt Tear Gas", price: 1.31 },
 ];
 
 // Delivery sectors. row/col place each one on the lair map (3x3 grid).
@@ -91,11 +136,24 @@ const SECTORS = [
 const ERROR_CODES = {
   1: "That Henchman ID doesn't match. Check the ID shown on the welcome screen.",
   2: "Choose a size to continue.",
-  3: "Choose a crust to continue.",
+  3: "That crust classification was not recognized.",
   4: "Choose at least one topping to continue.",
   5: "Choose a delivery sector to continue.",
   6: "The Henchman ID you entered doesn't match the one you logged in with.",
   7: "Your order is missing a size, crust, topping, or delivery sector.",
   8: "The numbers in the transfer formula don't match your itemized charges and gratuity.",
   9: "Press ENTER on the transfer formula to load your amount before paying.",
+};
+
+
+// VIOLATION #12 (Attention 1: multitasking / task switching).
+// Dr. A interrupts the first time each step is shown. Several messages contain
+// numbers and codes that compete with the ID and prices in working memory.
+const CHAT_MESSAGES = {
+  login: "Welcome back, henchman! Reminder: your locker combo is 4-8-2-1. Don't forget it.",
+  size: "Quick survey: on a scale of 1 to 10, how evil do you feel today? No need to answer. I already know.",
+  crust: "The shark feeding schedule has changed: 11:40, 13:15, and 16:05. Plan accordingly.",
+  toppings: "HR says Form 7Q-22B is overdue. Also, pepperoni prices are up 3%. Unrelated. Probably.",
+  sector: "The Launch Bay is closed until 18:30. The Gift Shop in Sector 9 has 20% off capes.",
+  payment: "Remember: your Henchman ID is NOT your locker combo (4-8-2-1). Please don't mix them up again.",
 };
