@@ -1,0 +1,26 @@
+/* Pizzeria Antiusabilious: base styles.
+   The (intentionally awful) lair theme gets built on top of this later. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Screen switching: only the active screen is visible */
+.screen { display: none; }
+.screen.active { display: block; }
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pizzeria Antiusabilious | Lair Cafeteria</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="app">
+
+    <!-- Screen 0: Orientation (shows Henchman ID once) -->
+    <section class="screen active" data-screen="orientation">
+      <h1>Orientation</h1>
+      <p>Placeholder: welcome text from Dr. Antiusabilious with the Henchman ID buried inside.</p>
+      <button data-go="login">Next</button>
+    </section>
+
+    <!-- Screen 1: Identity Verification -->
+    <section class="screen" data-screen="login">
+      <h1>Identity Verification</h1>
+      <p>Placeholder: Henchman ID field.</p>
+      <button data-go="size">Next</button>
+    </section>
+
+    <!-- Screen 2: Portion Allocation (size) -->
+    <section class="screen" data-screen="size">
+      <h1>Portion Allocation</h1>
+      <p>Placeholder: reversed "rations" slider.</p>
+      <button data-go="crust">Next</button>
+    </section>
+
+    <!-- Screen 3: Crust Classification -->
+    <section class="screen" data-screen="crust">
+      <h1>Crust Classification</h1>
+      <p>Placeholder: free-text crust field.</p>
+      <button data-go="toppings">Next</button>
+    </section>
+
+    <!-- Screen 4: Topping Arsenal -->
+    <section class="screen" data-screen="toppings">
+      <h1>Topping Arsenal</h1>
+      <p>Placeholder: 40+ codename toppings.</p>
+      <button data-go="sector">Next</button>
+    </section>
+
+    <!-- Screen 5: Delivery Sector -->
+    <section class="screen" data-screen="sector">
+      <h1>Delivery Sector</h1>
+      <p>Placeholder: lair map + sector dropdown.</p>
+      <button data-go="payment">Next</button>
+    </section>
+
+    <!-- Screen 6: Evil Credit Transfer (payment) -->
+    <section class="screen" data-screen="payment">
+      <h1>Evil Credit Transfer</h1>
+      <p>Placeholder: re-enter ID, stale summary, error codes.</p>
+      <button data-go="confirmation">Next</button>
+    </section>
+
+    <!-- Screen 7: Confirmation -->
+    <section class="screen" data-screen="confirmation">
+      <h1>Requisition Terminated</h1>
+      <p>Placeholder: red "terminated" banner with fine print.</p>
+      <button data-go="orientation" data-reset>Start over</button>
+    </section>
+
+  </main>
+
+  <footer>
+    <a href="handbook.html">Henchman Handbook</a> |
+    <a href="docs.html">Documentation</a>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
