@@ -4,18 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pizzeria Antiusabilious | Lair Cafeteria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="site-header">
-    <p class="brand">Pizzeria Antiusabilious</p>
-    <!-- VIOLATION #11 (Thinking: prominently indicate system status and progress):
-         the step count is honest, but the bar jumps to 99% after step 2. -->
-    <div class="progress-wrap" id="progress-wrap" hidden>
-      <p class="progress" id="progress" aria-live="polite"></p>
-      <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🍕</span>
+      <div>
+        <p class="brand-name">Pizzeria Antiusabilious</p>
+        <p class="brand-sub">Lair Cafeteria Division</p>
+      </div>
     </div>
   </header>
+
+  <!-- Task timer (instructor request; not a violation). Starts when the site
+       opens, stops on the confirmation screen. -->
+  <p class="task-timer" id="task-timer" aria-label="Elapsed time">⏱ 0:00</p>
+
+  <!-- VIOLATION #11 (Thinking: prominently indicate system status and progress):
+       percentage only; it reaches 99% on step 3 of 6, then creeps by decimals. -->
+  <div class="progress-wrap" id="progress-wrap" hidden>
+    <p class="progress" id="progress" aria-live="polite"></p>
+    <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
 
   <div class="layout">
     <main id="app">
@@ -103,7 +117,7 @@
         </div>
         <p class="error" data-error aria-live="assertive"></p>
         <fieldset>
-          <legend>Toppings</legend>
+          <legend>Toppings <span class="legend-note">(select at least 4)</span></legend>
           <!-- VIOLATION #8 (Thinking: choice overload): 84 unorganized toppings, no categories or search.
                VIOLATION #9 (Memory 1: changing ordering of information): reshuffled on every visit.
                VIOLATION #10 (Perception 1: distinguish colors by saturation and brightness):
@@ -118,14 +132,12 @@
       <!-- Screen 5: Delivery Sector -->
       <section class="screen" data-screen="sector">
         <h1>Choose a delivery sector</h1>
-        <p>Pick a sector on the lair map or from the list.</p>
+        <p>Pick a sector on the lair map.</p>
         <div id="sector-map" class="sector-map"></div>
-        <!-- VIOLATION #4: Next is centered under the map, before the sector list. -->
+        <!-- VIOLATION #4: Next is centered under the map. -->
         <div class="actions actions-center">
           <button type="button" class="btn primary" data-action="next">Submit to Dr. A</button>
         </div>
-        <label for="sector-select">Delivery sector</label>
-        <select id="sector-select"></select>
         <p class="error" data-error aria-live="assertive"></p>
         <div class="actions">
           <button type="button" class="btn back" data-action="back">Back</button>
@@ -173,8 +185,42 @@
           <p>8. Henchmen who forget their Henchman ID agree to consult the Henchman Handbook and to feel appropriately embarrassed.</p>
           <p>9. The Evil Transfer Formula™ is provided "as is." The Management makes no warranty regarding its accuracy, its memory, or its feelings.</p>
           <p>10. Pineapple on pizza is permitted under protest. The Management's protest is ongoing.</p>
+
+          <aside class="propaganda propaganda-vote" aria-label="Lair announcement">
+            <p class="propaganda-kicker">Paid for by the Committee to Re-Elect the Management</p>
+            <p class="propaganda-title">VOTE DR. ANTIUSABILIOUS</p>
+            <p class="propaganda-sub">Supreme Overlord · Unopposed since forever</p>
+            <p>Lower gratuities* · More sharks · Fewer questions</p>
+            <p class="propaganda-fine">*Gratuities will not be lowered.</p>
+          </aside>
+
           <p>11. Any dispute arising from a pizza transfer shall be resolved by trial by combat in the Throne Room, scheduled at the Management's convenience.</p>
           <p>12. These Terms may change at any time, including while you are reading them.</p>
+          <p>13. Evil Credits earned through minion referrals expire when the minion does.</p>
+          <p>14. The Management reserves the right to substitute any topping with a topping of equal or lesser dignity.</p>
+          <p>15. Pizza temperature is not guaranteed on delivery to the Server Dungeon, which is kept at 16°C for the servers' comfort, not yours.</p>
+          <p>16. Henchmen may not resell, sublease, or emotionally attach to pizza delivered under these Terms.</p>
+          <p>17. Complaints must be submitted on Form 66-C, in triplicate, in person, to Evil HR (Sector 7), during office hours, which are not published.</p>
+          <p>18. The Minion Hazard Gratuity is not a tip. Tips are optional. This is not optional. Please stop asking.</p>
+          <p>19. All slices are cut by laser. The Management accepts no responsibility for slices that are "too perfect."</p>
+          <p>20. Garlic knots are not included, have never been included, and will not be included. Do not ask about the garlic knots.</p>
+
+          <aside class="propaganda propaganda-minion" aria-label="Lair announcement">
+            <p class="propaganda-kicker">Lair Bulletin</p>
+            <p class="propaganda-title">🏆 Minion of the Month: Gary</p>
+            <p>Gary delivered 412 pizzas this month, survived the Shark Tank twice, and has never once asked about the garlic knots. Be like Gary.</p>
+          </aside>
+
+          <p>21. If any part of these Terms is found unenforceable, it will be enforced anyway, by sharks.</p>
+          <p>22. Minions delivering to the Launch Bay during a launch do so at their own risk and at approximately Mach 3.</p>
+          <p>23. Orders placed during a lair-wide evacuation will be delivered to the evacuation point, or to wherever the pizza lands.</p>
+          <p>24. The Evil Transfer Formula™ uses the order of operations preferred by the Management on the day of the transfer.</p>
+          <p>25. Crust classifications are trade secrets. Henchmen who memorize them are required to forget them after use.</p>
+          <p>26. The Gift Shop is not a delivery sector for romantic purposes. You know who you are.</p>
+          <p>27. Refunds are issued in Evil Credits, which are non-refundable (see Clause 2).</p>
+          <p>28. The Management may read these Terms aloud, dramatically, at any time.</p>
+          <p>29. By scrolling past these Terms, you agree that you have read them, which you have not.</p>
+          <p>30. Thank you for choosing Pizzeria Antiusabilious. Resistance is futile. Enjoy your pizza.</p>
         </section>
 
         <!-- Supporting mechanism for VIOLATION #3: the charges are collapsed.
@@ -191,6 +237,7 @@
       <!-- Screen 7: Confirmation -->
       <section class="screen" data-screen="confirmation">
         <h1>Order placed</h1>
+        <p class="final-time" id="final-time"></p>
         <p>Your order number is <strong id="order-number"></strong>. A minion is on the way.</p>
         <dl id="confirmation-summary" class="summary-list"></dl>
         <div class="actions">
@@ -233,8 +280,17 @@
   </div>
 
   <footer class="site-footer">
-    <a href="handbook.html">Henchman Handbook</a> |
-    <a href="docs.html">Documentation</a>
+    <div class="footer-inner">
+      <div>
+        <p class="footer-brand">🍕 Pizzeria Antiusabilious</p>
+        <p class="footer-muted">Lair Cafeteria Division · Feeding henchmen since the last evil plan.</p>
+      </div>
+      <nav aria-label="Resources">
+        <p class="footer-heading">Resources</p>
+        <a href="handbook.html">Henchman Handbook</a>
+      </nav>
+    </div>
+    <p class="footer-legal">© Dr. Antiusabilious Industries. All pizza rights reserved.</p>
   </footer>
 
   <!-- VIOLATION #12 (Attention 1: multitasking / task switching):

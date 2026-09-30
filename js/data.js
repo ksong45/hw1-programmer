@@ -23,6 +23,9 @@ const CRUSTS = [
   { id: "stuffed", name: "Stuffed",     codename: "Stuffed Dungeon" },
 ];
 
+// Every order needs at least this many toppings (more prices to carry to payment).
+const MIN_TOPPINGS = 4;
+
 // Mandatory gratuity, shown only as a percentage (supports VIOLATION #3).
 const GRATUITY_RATE = 0.18;
 
@@ -137,7 +140,7 @@ const ERROR_CODES = {
   1: "That Henchman ID doesn't match. Check the ID shown on the welcome screen.",
   2: "Choose a size to continue.",
   3: "That crust classification was not recognized.",
-  4: "Choose at least one topping to continue.",
+  4: "Select at least 4 toppings to continue.",
   5: "Choose a delivery sector to continue.",
   6: "The Henchman ID you entered doesn't match the one you logged in with.",
   7: "Your order is missing a size, crust, topping, or delivery sector.",

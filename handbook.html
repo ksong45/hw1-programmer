@@ -4,12 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Henchman Handbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main class="handbook" style="max-width: 820px; margin: 2rem auto;">
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🍕</span>
+      <div>
+        <p class="brand-name">Pizzeria Antiusabilious</p>
+        <p class="brand-sub">Lair Cafeteria Division</p>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="layout layout-single">
+  <main class="handbook">
     <h1>Henchman Handbook</h1>
-    <p><a href="index.html">Return to ordering</a></p>
+    <p><a href="index.html">← Return to ordering</a></p>
 
     <h2>Forgotten Henchman ID</h2>
     <p>Your Henchman ID is: <canvas id="hb-id" role="img" aria-label="Henchman ID" style="vertical-align: middle;"></canvas></p>
@@ -26,6 +41,21 @@
     <h2>Requisition error codes</h2>
     <div class="table-wrap"><table id="hb-errors"></table></div>
   </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <p class="footer-brand">🍕 Pizzeria Antiusabilious</p>
+        <p class="footer-muted">Lair Cafeteria Division · Feeding henchmen since the last evil plan.</p>
+      </div>
+      <nav aria-label="Resources">
+        <p class="footer-heading">Resources</p>
+        <a href="handbook.html">Henchman Handbook</a>
+      </nav>
+    </div>
+    <p class="footer-legal">© Dr. Antiusabilious Industries. All pizza rights reserved.</p>
+  </footer>
 
   <script src="js/data.js"></script>
   <script src="js/render-id.js"></script>

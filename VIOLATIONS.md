@@ -4,7 +4,11 @@ Source of truth for every usability violation on the site.
 **Change log** = built. **Backlog** = candidates from lectures, decided screen by screen before building.
 Rule: each idea gets exactly ONE lecture home (no double-counting).
 
-Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the **Break Room**.
+Benchmark task: order a **medium, thin-crust pizza with pepperoni, mushrooms, onions, and green peppers**, delivered to the **Break Room**. (Every order requires at least 4 toppings. Time the Domino's baseline with the same four toppings.)
+
+Site behavior notes for the cheatsheet: pressing Enter never advances a page (click the forward button); the Sector screen has map tiles only (no dropdown). A task timer (instructor request, not a violation) starts when the site opens, keeps running through refreshes, and shows the final time on the confirmation screen; "Start a new order" resets it.
+
+Documentation lives in a blog-style Google Slides deck exported to PDF (with the site URL inside), not on the website. The "Draft write-up" and "Screenshot" notes below are meant to feed that deck.
 
 ---
 
@@ -40,7 +44,7 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 - **Recovery path (keeps task completable):** Handbook → "Forgotten Henchman ID."
 
 ### #3: Charges far from the transfer formula (Memory 1, present all info needed for a task on a single screen)
-- **What changed:** The payment screen is ordered so the pieces of the task can never be seen together. At the top: the Evil Transfer Formula, the read-only amount field, the ID field, and the Pay button. In the middle: a long "Evil Credit Transfer Terms & Conditions" block (at least 140% of the screen height). At the bottom: the itemized charges.
+- **What changed:** The payment screen is ordered so the pieces of the task can never be seen together. At the top: the Evil Transfer Formula, the read-only amount field, the ID field, and the Pay button. In the middle: a long "Evil Credit Transfer Terms & Conditions" block (30 clauses, broken up by a "VOTE DR. ANTIUSABILIOUS" campaign poster and a "Minion of the Month" bulletin). It's all real content, with no blank padding, and is roughly 2,000px tall, so even on a 1440p monitor the formula and charges are never on screen together. At the bottom: the itemized charges.
 - **Supporting mechanisms (not separate violations):**
   - **Evil Transfer Formula™:** one blank box per charge plus a gratuity-percentage box, as in `( [ ] + [ ] ) × ( 1 + [ ] ÷ 100 )`. ENTER (or pressing Enter in any box) computes the result and loads it into the amount field.
   - **Transcription is enforced:** payment only succeeds if the boxes contain exactly the listed prices (any order) and 18 for the gratuity. A phone-calculated total in one box fails (Error 8). Forgetting ENTER fails (Error 9).
@@ -50,7 +54,7 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
   - **Auto-collapsing charges:** the itemized list sits in a collapsed "Show itemized charges" panel. It snaps shut whenever it scrolls out of view, so every trip back down to read a price means opening it again.
 - **Files:** `index.html` (payment layout, formula markup, `.transfer-terms`, `#charges-panel`), `js/app.js` (`buildFormula`, `loadFormula`, `formulaMatchesCharges`, paste blocking, payment validator, charges table, auto-collapse observer), `js/data.js` (messy prices, `GRATUITY_RATE`, error codes 8 and 9), `css/style.css` (formula, terms, read-only field).
 - **Draft write-up:** The memory guidelines say to present all the information a task needs on a single screen, so users don't have to hold it in working memory. Here, every price must be read at the bottom of the page (after reopening the collapsed charges panel, which closes itself whenever the user scrolls away), carried up past a wall of terms, and typed into the formula at the top, one scroll trip per charge. The prices are deliberately awkward (11.37, 1.83) and pasting is disabled, so each trip loads short-term memory with a number that's easy to garble. Users are also recalling the 16-character Henchman ID on the same screen.
-- **Benchmark answer (cheatsheet):** boxes `11.37` and `1.83` (either order), gratuity `18`, press ENTER → amount **15.58**.
+- **Benchmark answer (cheatsheet):** boxes `11.37`, `1.83`, `1.27`, `0.89`, `1.18` (medium, pepperoni, mushrooms, onions, green peppers, in any order), gratuity `18`, press ENTER → amount **19.52**.
 - **Screenshot:** Top (formula) and bottom (charges), or one zoomed-out full-page capture with an arrow showing the distance.
 
 ### #4: Next button moves and changes name on every screen (Perception 2, be consistent)
@@ -108,10 +112,10 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 - **Screenshot:** A zoomed crop with Pepperoni checked beside unchecked items; label which one is selected.
 
 ### #11: Honest step count, misleading progress bar (Thinking, prominently indicate system status and progress)
-- **What changed:** The header shows an accurate "Step X of 6" next to a progress bar and percentage that misrepresent the remaining work: 12% at step 1, 31% at step 2, then **99%** from step 3 onward, creeping to 99.2%, 99.5%, and 99.8%. The values are fixed, so every user sees the same thing.
+- **What changed:** A large, centered progress bar sits right under the header, showing only a percentage (no step count): 33% at step 1, 66% at step 2, **99%** at step 3, then 99.2%, 99.5%, and 99.8% for the remaining three steps. The values are fixed, so every user sees the same thing.
 - **Files:** `index.html` (header `.progress-wrap`), `js/app.js` (`PROGRESS_PERCENT`, `showScreen`), `css/style.css` (progress styles).
-- **Draft write-up:** The problem-solving guidelines say to prominently indicate status and progress, and the decision-making lecture shows how setting expectations helps users estimate interaction cost. This bar technically shows progress but sets the wrong expectation: at 99% "complete," users believe they're one click from done while four screens, including the longest (payment), remain. The mismatch between "Step 3 of 6" and "99%" also makes users doubt which indicator to trust.
-- **Screenshot:** The header at step 3 (99%) and at step 6 (99.8%).
+- **Draft write-up:** The problem-solving guidelines say to prominently indicate status and progress, and the decision-making lecture shows how setting expectations helps users estimate interaction cost. This bar is prominent and looks authoritative, but it sets the wrong expectation: the first three steps each fill a third of the bar, so at step 3 users see 99% "complete" and believe they're one click from done, while three screens remain, including the longest (payment). With no step count to cross-check, the bar is the only status information users have.
+- **Screenshot:** The progress bar at step 3 (99%) and at step 6 (99.8%).
 
 ### #12: Dr. A's chat interrupts every step (Attention 1, multitasking / serial task switching)
 - **What changed:** The first time each step (Login through Payment) is shown, a chat window from "Dr. Antiusabilious" opens over a dimmed screen and blocks the page until it's closed with ✕ (or Esc). Each step has its own message, and several contain numbers and codes: locker combo 4-8-2-1, shark feeding times, Form 7Q-22B, "closed until 18:30."
@@ -165,6 +169,7 @@ Benchmark task: order a **medium, thin-crust pepperoni pizza** delivered to the 
 - Silently preselected Sector 7: Thinking, check assertions and assumptions
 - Delivery times out of chronological order: Attention 2, temporal order of options
 - Sector numbers not in spatial order: *needs a lecture home*
+- Enter doesn't advance: Attention 2, removing familiar features *(built as site behavior, intentionally not counted)*
 
 ### Payment
 - System knows the prices but makes users do the arithmetic: Thinking (Decision Support), don't make people calculate *(tried with a calculator, then removed; available to reuse)*

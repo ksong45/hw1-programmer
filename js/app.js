@@ -2,7 +2,6 @@
 // Content lives in data.js. This file handles screens, validation and the order.
 
 const SCREENS = ["orientation", "login", "size", "crust", "toppings", "sector", "payment", "confirmation"];
-const STEP_SCREENS = ["login", "size", "crust", "toppings", "sector", "payment"]; // counted in progress
 const SUMMARY_SCREENS = ["size", "sector", "payment"];  // show order sidebar (hidden on Toppings: VIOLATION #10)
 const AD_RAIL_SCREENS = ["crust"];                                               // VIOLATION #7
 
@@ -62,17 +61,12 @@ function buildInputs() {
       <span class="sector-number">${s.number}</span>
       <span>${s.name}</span>
     </button>`).join("");
-
-  $("#sector-select").innerHTML =
-    `<option value="">Select a sector</option>` +
-    SECTORS.map((s) => `<option value="${s.number}">Sector ${s.number}: ${s.name}</option>`).join("");
 }
 
 // ---------- Order state ----------
 
 function setSector(number) {
   order.sector = number ? Number(number) : null;
-  $("#sector-select").value = order.sector ?? "";
   $$(".sector-tile").forEach((tile) => {
     const selected = Number(tile.dataset.sector) === order.sector;
     tile.classList.toggle("selected", selected);
@@ -106,7 +100,6 @@ document.addEventListener("change", (event) => {
   if (el.name === "topping") {
     order.toppings = $$('input[name="topping"]:checked').map((box) => box.value);
   }
-  if (el.id === "sector-select") setSector(el.value);
   renderSummary();
 });
 
@@ -130,7 +123,7 @@ const validators = {
     order.crust = match ? match.id : null;
     return match ? null : 3;
   },
-  toppings: () => (order.toppings.length ? null : 4),
+  toppings: () => (order.toppings.length >= MIN_TOPPINGS ? null : 4),
   sector: () => (order.sector ? null : 5),
   payment: () => {
     if (!formulaMatchesCharges()) return 8;
@@ -154,10 +147,10 @@ function clearError(screenName) {
 
 // ---------- Screen hooks (run when a screen is shown) ----------
 
-// VIOLATION #11: the bar leaps to 99% after step 2, then creeps.
+// VIOLATION #11: thirds for the first three steps (33, 66, 99), then it creeps.
 const PROGRESS_PERCENT = {
-  login: 12,
-  size: 31,
+  login: 33,
+  size: 66,
   crust: 99,
   toppings: 99.2,
   sector: 99.5,
@@ -199,6 +192,7 @@ const onEnter = {
     $("#charges-panel").open = false;
   },
   confirmation: () => {
+    stopTimer();
     $("#order-number").textContent = order.number;
     $("#confirmation-summary").innerHTML = summaryHTML(true);
   },
@@ -214,14 +208,11 @@ function showScreen(index) {
     screen.classList.toggle("active", screen.dataset.screen === name);
   });
 
-  const step = STEP_SCREENS.indexOf(name);
-  // VIOLATION #11: honest step count, misleading bar (fixed values, same every time).
+  // VIOLATION #11: percentage only (no step count), fixed misleading values.
   const percent = name === "confirmation" ? 100 : PROGRESS_PERCENT[name];
   $("#progress-wrap").hidden = percent === undefined;
   if (percent !== undefined) {
-    $("#progress").textContent = name === "confirmation"
-      ? "Complete · 100%"
-      : `Step ${step + 1} of ${STEP_SCREENS.length} · ${percent}% complete`;
+    $("#progress").textContent = `${percent}% complete`;
     $("#progress-fill").style.width = percent + "%";
   }
 
@@ -280,6 +271,7 @@ function goBack() {
 }
 
 function restart() {
+  clearTimerStorage();
   window.location.href = window.location.pathname;
 }
 
@@ -292,10 +284,9 @@ document.addEventListener("click", (event) => {
   if (action === "restart") restart();
 });
 
-// Pressing Enter in a text field acts like the primary button.
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && event.target.matches("input[type='text']") && $("#chat-overlay").hidden) goNext();
-});
+// Note: pressing Enter in a field intentionally does NOT advance the page.
+// Users must click the forward button. (Enter in the payment formula still
+// loads the amount; see the Evil Transfer Formula section.)
 
 // VIOLATION #2: block pasting into the ID fields so the ID must be recalled.
 ["#login-id", "#payment-id"].forEach((selector) => {
@@ -389,6 +380,63 @@ new IntersectionObserver((entries) => {
     if (!entry.isIntersecting && chargesPanel.open) chargesPanel.open = false;
   });
 }).observe(chargesPanel);
+
+// ---------- Task timer (instructor request; not a violation) ----------
+// Starts when the site first opens and keeps running through page refreshes
+// (so reloading doesn't reset the measurement). Stops on the confirmation
+// screen, which shows the final time. "Start a new order" resets it.
+
+const TIMER_START_KEY = "lairTimerStart";
+const TIMER_DONE_KEY = "lairTimerDone";
+
+function storageGet(key) {
+  try { return sessionStorage.getItem(key); } catch (e) { return null; }
+}
+function storageSet(key, value) {
+  try { sessionStorage.setItem(key, value); } catch (e) { /* storage unavailable */ }
+}
+function clearTimerStorage() {
+  try {
+    sessionStorage.removeItem(TIMER_START_KEY);
+    sessionStorage.removeItem(TIMER_DONE_KEY);
+  } catch (e) { /* storage unavailable */ }
+}
+
+let timerStart = Number(storageGet(TIMER_START_KEY));
+if (!timerStart || storageGet(TIMER_DONE_KEY)) {
+  timerStart = Date.now();
+  clearTimerStorage();
+  storageSet(TIMER_START_KEY, String(timerStart));
+}
+
+function formatClock(ms) {
+  const total = Math.floor(ms / 1000);
+  const minutes = Math.floor(total / 60);
+  const seconds = String(total % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function formatLong(ms) {
+  const total = Math.floor(ms / 1000);
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return minutes ? `${minutes} min ${seconds} s` : `${seconds} s`;
+}
+
+function renderTimer() {
+  $("#task-timer").textContent = "⏱ " + formatClock(Date.now() - timerStart);
+}
+
+const timerInterval = setInterval(renderTimer, 1000);
+renderTimer();
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  const elapsed = Date.now() - timerStart;
+  $("#task-timer").textContent = "⏱ " + formatClock(elapsed) + " · finished";
+  $("#final-time").textContent = `⏱ Your time: ${formatLong(elapsed)}`;
+  storageSet(TIMER_DONE_KEY, "1");
+}
 
 // ---------- Start ----------
 

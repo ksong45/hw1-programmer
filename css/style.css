@@ -1,21 +1,30 @@
-/* Pizzeria Antiusabilious: clean baseline styles.
-   This is the "good UX" starting point. Break it on purpose later. */
+/* Pizzeria Antiusabilious: base theme.
+   A clean, professional frame. The usability violations are layered on top
+   and marked with "VIOLATION #N" comments throughout this file. */
 
 :root {
-  --bg: #f6f6f4;
+  --bg: #efede8;
   --surface: #ffffff;
-  --text: #1f1f1f;
-  --muted: #666666;
-  --border: #d6d6d2;
-  --accent: #2f5d8a;
+  --text: #1f1d24;
+  --muted: #6b6873;
+  --border: #dcd8d0;
+  --accent: #4b1d6b;
   --accent-text: #ffffff;
   --error: #b3261e;
   --selected: #e3edf7;
+  --ink: #17151c;
+  --ink-2: #221f29;
+  --heading: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
+html, body { height: 100%; }
+
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.5;
@@ -23,53 +32,90 @@ body {
   background: var(--bg);
 }
 
-/* ---------- Header / footer ---------- */
+h1, h2, .brand-name, .footer-brand { font-family: var(--heading); }
+
+/* ---------- Header banner ---------- */
 
 .site-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  justify-content: center;
+  padding: 1.4rem 1rem;
+  text-align: center;
+  color: #f4f2f7;
+  background: var(--ink);
 }
-.brand { margin: 0; font-weight: 700; }
-.progress { margin: 0; color: var(--muted); }
+.brand { display: flex; align-items: center; gap: 0.8rem; }
+.brand p { margin: 0; }
+.brand-mark { font-size: 2.3rem; line-height: 1; }
+.brand-name { font-weight: 700; font-size: clamp(1.35rem, 3vw, 1.9rem); letter-spacing: 0.01em; }
+.brand-sub { font-size: 0.8rem; color: #b8b3c2; letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ---------- Footer ---------- */
 
 .site-footer {
-  text-align: center;
-  padding: 1.5rem;
+  margin-top: auto;
+  color: #cfcad8;
+  background: var(--ink);
   font-size: 0.9rem;
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.75rem clamp(1rem, 4vw, 2.5rem) 1rem;
+}
+.site-footer p { margin: 0.2rem 0; }
+.footer-brand { font-weight: 700; color: #fff; }
+.footer-muted { color: #9d98a8; }
+.footer-heading { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: #9d98a8; }
+.site-footer a { color: #e7c9ff; }
+.footer-legal {
+  max-width: 1180px;
+  margin: 0 auto !important;
+  padding: 0.9rem clamp(1rem, 4vw, 2.5rem) 1.5rem;
+  font-size: 0.8rem;
+  color: #85808f;
+  border-top: 1px solid #2e2a36;
 }
 
 /* ---------- Layout ---------- */
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1.75rem;
+  width: 100%;
+  max-width: 1180px;
+  margin: 2rem auto 3rem;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
 }
-.layout:has(.summary[hidden]):has(.ad-rail[hidden]) { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
+.layout:has(.summary[hidden]):has(.ad-rail[hidden]),
+.layout-single { grid-template-columns: minmax(0, 1fr); }
 
-@media (max-width: 760px) {
+@media (max-width: 860px) {
   .layout { grid-template-columns: minmax(0, 1fr); }
 }
 
 main {
+  min-height: 420px;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(20, 15, 30, 0.04), 0 8px 24px rgba(20, 15, 30, 0.06);
 }
+
+/* Keep reading width comfortable inside the wide card. */
+.screen > p, .screen > label, .screen > fieldset, .screen > .error { max-width: 760px; }
 
 /* Screen switching: only the active screen is visible */
 .screen { display: none; }
 .screen.active { display: block; }
 
-h1 { margin-top: 0; font-size: 1.6rem; }
+h1 { margin-top: 0; font-size: clamp(1.5rem, 2.5vw, 1.9rem); }
 
 /* ---------- Form controls ---------- */
 
@@ -87,6 +133,7 @@ input[type="text"], select {
 
 fieldset { border: none; padding: 0; margin: 1rem 0 0; }
 legend { font-weight: 600; margin-bottom: 0.5rem; }
+.legend-note { font-weight: 400; color: var(--muted); }
 
 .options { display: grid; gap: 0.5rem; }
 /* VIOLATION #8: an unorganized jumble of pills (no columns, no groups). */
@@ -122,10 +169,11 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
 .inline-control select { flex: 1 1 200px; }
 
 .btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.65rem 1.3rem;
   font: inherit;
+  font-weight: 600;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--surface);
   cursor: pointer;
 }
@@ -148,9 +196,10 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
    A busy CSS "pizza" (pepperoni, olives, basil on cheese) behind
    warm red/brown/orange text. Hard to read, but still readable. */
 .screen-orientation.active {
-  margin: -1.5rem;
-  padding: 1.5rem;
-  border-radius: 8px;
+  margin: calc(-1 * clamp(1.25rem, 3vw, 2.25rem));
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  min-height: 420px;
+  border-radius: 14px;
   color: #7a2e0e;
   background-color: #f4b63f;
   background-image:
@@ -198,7 +247,8 @@ legend { font-weight: 600; margin-bottom: 0.5rem; }
   align-self: start;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(20, 15, 30, 0.06);
   padding: 1rem 1.25rem;
 }
 .summary h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
@@ -274,16 +324,39 @@ th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(
 
 #payment-amount[readonly] { background: #f0f0ec; cursor: not-allowed; }
 
-/* VIOLATION #3: the terms block pushes the charges far below the formula,
-   taller than any screen, so they're never visible at the same time. */
+/* VIOLATION #3: a long terms block (real content, no blank space) pushes the
+   charges far below the formula, so they're never visible at the same time. */
 .transfer-terms {
-  min-height: 140vh;
-  margin: 2.5rem 0;
+  margin: 2rem 0 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border);
   font-size: 0.95rem;
 }
 .transfer-terms h2 { font-size: 1.1rem; }
+
+/* Lair propaganda between the terms (fills the #3 gap with content, not blank space). */
+.propaganda {
+  max-width: 760px;
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  border-radius: 12px;
+}
+.propaganda p { margin: 0.3rem 0; }
+.propaganda-kicker { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.8; }
+.propaganda-title { font-family: var(--heading); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; }
+.propaganda-sub { font-weight: 600; }
+.propaganda-fine { font-size: 0.75rem; opacity: 0.75; }
+.propaganda-vote {
+  color: #fff;
+  background: repeating-linear-gradient(135deg, #7a1f2b 0 22px, #8c2633 22px 44px);
+  border: 3px solid #f2c14e;
+}
+.propaganda-minion {
+  color: #2a2410;
+  background: #fff4cf;
+  border: 2px solid #e2b83b;
+}
 
 /* ---------- Crust screen ads (VIOLATION #7: banner blindness) ---------- */
 
@@ -332,23 +405,37 @@ th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(
 }
 .topping-grid input[type="checkbox"]:checked { background: #f5eee4; border-color: #e9dfd1; }
 
-/* ---------- VIOLATION #11 (Thinking): misleading progress bar ---------- */
-.progress-wrap { display: flex; align-items: center; gap: 0.75rem; }
+/* ---------- VIOLATION #11 (Thinking): big, centered, misleading progress bar ---------- */
+.progress-wrap {
+  width: 100%;
+  max-width: 720px;
+  margin: 1.75rem auto 0;
+  padding: 0 1rem;
+  text-align: center;
+}
 .progress-wrap[hidden] { display: none; }
+.progress {
+  margin: 0 0 0.6rem;
+  font-family: var(--heading);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  font-weight: 700;
+  color: var(--text);
+}
 .progress-bar {
-  width: 160px;
-  height: 10px;
-  background: #e6e6e1;
+  width: 100%;
+  height: 18px;
+  background: #dcd8d0;
   border-radius: 999px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 .progress-fill {
   height: 100%;
   width: 0;
-  background: #3b8a3e;
-  transition: width 0.4s ease;
+  background: linear-gradient(90deg, #2f7d32, #4caf50);
+  border-radius: 999px;
+  transition: width 0.5s ease;
 }
-@media (max-width: 520px) { .progress-bar { width: 80px; } }
 
 /* ---------- VIOLATION #12 (Attention 1): Dr. A's interrupting chat ---------- */
 .chat-overlay {
@@ -401,4 +488,27 @@ th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(
   background: #fff;
   border-radius: 12px 12px 12px 2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- Task timer (instructor request; not a violation) ---------- */
+.task-timer {
+  margin: 1.25rem auto 0;
+  font-family: var(--heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.progress-wrap { margin-top: 0.6rem; }
+.final-time {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 1rem;
+  font-family: var(--heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: #f1efe9;
+  border: 1px solid var(--border);
+  border-radius: 10px;
 }
