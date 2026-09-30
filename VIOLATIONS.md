@@ -4,9 +4,13 @@ Source of truth for every usability violation on the site.
 **Change log** = built. **Backlog** = candidates from lectures, decided screen by screen before building.
 Rule: each idea gets exactly ONE lecture home (no double-counting).
 
-Benchmark task: order a **medium, thin-crust pizza with pepperoni, mushrooms, onions, and green peppers**, delivered to the **Break Room**. (Every order requires at least 4 toppings. Time the Domino's baseline with the same four toppings.)
+**The task (stated in the site):** You're a new hire at the Lair Cafeteria. A henchman has called in an order, shown on an order ticket in your shift briefing (Orientation). Log in with your employee ID and enter the order exactly as requested: size, crust, 4 toppings, and delivery sector, then ring it up.
 
-Site behavior notes for the cheatsheet: pressing Enter never advances a page (click the forward button); the Sector screen has map tiles only (no dropdown). A task timer (instructor request, not a violation) starts when the site opens, keeps running through refreshes, and shows the final time on the confirmation screen; "Start a new order" resets it.
+**Randomized every session** (`js/session.js`): the employee ID, the gratuity percentage (12/15/17/18/20/22%), and the order ticket (random size, crust, 4 distinct toppings, deliverable sector, customer name, ticket number). Every ticket has the same complexity, so attempts are comparable. The session persists through refreshes and the Handbook; "Log next order" starts a new one.
+
+**Baseline suggestion:** time the same kind of order (one size, one crust, 4 toppings, delivery address) on a regular pizza site such as Domino's.
+
+**Site behavior notes:** pressing Enter never advances a page; Sector has map tiles only; orders need at least 4 toppings (the ticket always has exactly 4). A task timer (instructor request, not a violation) runs from the start of the session to the confirmation screen, which shows the final time.
 
 Documentation lives in a blog-style Google Slides deck exported to PDF (with the site URL inside), not on the website. The "Draft write-up" and "Screenshot" notes below are meant to feed that deck.
 
@@ -28,6 +32,10 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 | 10 | Toppings | Perception 1 | Distinguish colors by saturation and brightness, as well as hue | Built |
 | 11 | All screens (header) | Thinking (Problem Solving) | Prominently indicate system status and progress (setting expectations) | Built |
 | 12 | Login → Payment | Attention 1 | Multitasking = serial task switching (interruptions) | Built |
+| 13 | Payment | Thinking (Problem Solving) | Don't make users diagnose system problems | Built |
+| 14 | Orientation (ticket) | Memory 1 | Make instructions easily accessible during a task | Built |
+| 15 | Sector | Thinking (Decision Support) | Check assertions and assumptions | Built |
+| 16 | Sector | Perception 1 | Avoid color pairs that color-blind people cannot distinguish (use color redundantly) | Built |
 
 ### #1: Pizza background behind warm text (Reading, avoid text on noisy background)
 - **What changed:** The Orientation screen sits on a busy CSS pizza pattern (pepperoni, olives, basil, cheese). Heading and body text are red, brown, and orange, the same palette as the pattern.
@@ -35,26 +43,25 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - **Draft write-up:** The lecture recommends plain, light backgrounds with no patterns. Here the text competes with a high-detail pattern in the same hues, which disrupts automatic, feature-driven reading and slows comprehension of the screen that explains the task.
 - **Screenshot:** Orientation, full screen.
 
-### #2: Long, unchunked, uncopyable Henchman ID (Perception 2, chunking long numbers)
-- **What changed:** The ID became `K7QX2M9WZ4TR8BVJ`: 16 random characters with no spaces, dashes, or meaningful chunks. (The old ID contained "HNCH" and "LAIR," which were memorable.)
+### #2: Long, unchunked, uncopyable employee ID (Perception 2, chunking long numbers)
+- **What changed:** The employee ID is 16 random characters (e.g. `SSBL2RXMPRL69U8N`) with no spaces, dashes, or meaningful chunks, and a **new one is generated every session**, so it can never be memorized across attempts.
 - **Supporting mechanism (not a separate violation):** The ID is drawn on a `<canvas>`, so it can't be selected or copied, and paste is blocked in the login and payment ID fields. This makes the memory cost unavoidable instead of a copy-paste shortcut.
-- **Files:** `js/data.js` (`HENCHMAN_ID`), `js/render-id.js` (new), `js/app.js` (canvas draw and paste blocking), `index.html`, `handbook.html`.
+- **Files:** `js/session.js` (`randomEmployeeId`), `js/render-id.js`, `js/app.js` (canvas draw and paste blocking), `index.html`, `handbook.html`.
 - **Draft write-up:** The structure guidelines say to chunk long numbers so people can scan and hold them. This ID is one unbroken 16-character string of unrelated characters, well beyond the 4±1 chunks people can hold (Memory 1), and it's needed twice, at login and at payment.
 - **Screenshot:** Orientation ID line plus Login field.
-- **Recovery path (keeps task completable):** Handbook → "Forgotten Henchman ID."
+- **Recovery path (keeps task completable):** Handbook → "Forgotten employee ID."
 
 ### #3: Charges far from the transfer formula (Memory 1, present all info needed for a task on a single screen)
 - **What changed:** The payment screen is ordered so the pieces of the task can never be seen together. At the top: the Evil Transfer Formula, the read-only amount field, the ID field, and the Pay button. In the middle: a long "Evil Credit Transfer Terms & Conditions" block (30 clauses, broken up by a "VOTE DR. ANTIUSABILIOUS" campaign poster and a "Minion of the Month" bulletin). It's all real content, with no blank padding, and is roughly 2,000px tall, so even on a 1440p monitor the formula and charges are never on screen together. At the bottom: the itemized charges.
 - **Supporting mechanisms (not separate violations):**
   - **Evil Transfer Formula™:** one blank box per charge plus a gratuity-percentage box, as in `( [ ] + [ ] ) × ( 1 + [ ] ÷ 100 )`. ENTER (or pressing Enter in any box) computes the result and loads it into the amount field.
-  - **Transcription is enforced:** payment only succeeds if the boxes contain exactly the listed prices (any order) and 18 for the gratuity. A phone-calculated total in one box fails (Error 8). Forgetting ENTER fails (Error 9).
+  - **Transcription is enforced:** payment only succeeds if the boxes contain exactly the listed prices (any order) and the session's gratuity percentage. A phone-calculated total in one box fails (Error 8). Forgetting ENTER fails (Error 9).
   - **Paste is blocked** in the formula boxes, so prices must be carried in memory rather than copied.
-  - **Messy prices** (Medium 11.37, Pepperoni 1.83; every topping has its own price) and a gratuity stated only as "18% of all items above." No subtotal or total is ever shown before confirmation.
+  - **Messy prices** (Medium 11.37, Pepperoni 1.83; every topping has its own price) and a gratuity stated only as a percentage ("17% of all items above"), randomized per session. No subtotal or total is ever shown before confirmation.
   - **The amount field is read-only;** the only way to fill it is the formula.
   - **Auto-collapsing charges:** the itemized list sits in a collapsed "Show itemized charges" panel. It snaps shut whenever it scrolls out of view, so every trip back down to read a price means opening it again.
-- **Files:** `index.html` (payment layout, formula markup, `.transfer-terms`, `#charges-panel`), `js/app.js` (`buildFormula`, `loadFormula`, `formulaMatchesCharges`, paste blocking, payment validator, charges table, auto-collapse observer), `js/data.js` (messy prices, `GRATUITY_RATE`, error codes 8 and 9), `css/style.css` (formula, terms, read-only field).
-- **Draft write-up:** The memory guidelines say to present all the information a task needs on a single screen, so users don't have to hold it in working memory. Here, every price must be read at the bottom of the page (after reopening the collapsed charges panel, which closes itself whenever the user scrolls away), carried up past a wall of terms, and typed into the formula at the top, one scroll trip per charge. The prices are deliberately awkward (11.37, 1.83) and pasting is disabled, so each trip loads short-term memory with a number that's easy to garble. Users are also recalling the 16-character Henchman ID on the same screen.
-- **Benchmark answer (cheatsheet):** boxes `11.37`, `1.83`, `1.27`, `0.89`, `1.18` (medium, pepperoni, mushrooms, onions, green peppers, in any order), gratuity `18`, press ENTER → amount **19.52**.
+- **Files:** `index.html` (payment layout, formula markup, `.transfer-terms`, `#charges-panel`), `js/app.js` (`buildFormula`, `loadFormula`, `formulaMatchesCharges`, paste blocking, payment validator, charges table, auto-collapse observer), `js/data.js` (messy prices, `GRATUITY_OPTIONS`, error codes 8 and 9), `js/session.js` (`GRATUITY_RATE`), `css/style.css` (formula, terms, read-only field).
+- **Draft write-up:** The memory guidelines say to present all the information a task needs on a single screen, so users don't have to hold it in working memory. Here, every price must be read at the bottom of the page (after reopening the collapsed charges panel, which closes itself whenever the user scrolls away), carried up past a wall of terms, and typed into the formula at the top, one scroll trip per charge. The prices are deliberately awkward (11.37, 1.83) and pasting is disabled, so each trip loads short-term memory with a number that's easy to garble. Users are also recalling the 16-character employee ID on the same screen.
 - **Screenshot:** Top (formula) and bottom (charges), or one zoomed-out full-page capture with an arrow showing the distance.
 
 ### #4: Next button moves and changes name on every screen (Perception 2, be consistent)
@@ -121,15 +128,38 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - **What changed:** The first time each step (Login through Payment) is shown, a chat window from "Dr. Antiusabilious" opens over a dimmed screen and blocks the page until it's closed with ✕ (or Esc). Each step has its own message, and several contain numbers and codes: locker combo 4-8-2-1, shark feeding times, Form 7Q-22B, "closed until 18:30."
 - **Guardrails (keeps it within the rubric):** deterministic (same message, once per step, no timers or randomness); the ✕ is normal-sized, visible, and automatically focused; Esc also closes it. It never reappears when revisiting a step.
 - **Files:** `index.html` (`#chat-overlay`), `js/data.js` (`CHAT_MESSAGES`), `js/app.js` (`openChat`, `closeChat`, called from `showScreen`), `css/style.css` (chat styles).
-- **Draft write-up:** The attention lecture shows that multitasking is really serial task switching: every switch costs time, raises errors, and can cause users to miss things. Here, each new step starts with a forced switch to an unrelated conversation, then a switch back, where the user must reorient to a screen they haven't read yet. The messages also load working memory with irrelevant numbers at exactly the moments users are holding the Henchman ID or prices, so the interruption costs more than the click to dismiss it.
+- **Draft write-up:** The attention lecture shows that multitasking is really serial task switching: every switch costs time, raises errors, and can cause users to miss things. Here, each new step starts with a forced switch to an unrelated conversation, then a switch back, where the user must reorient to a screen they haven't read yet. The messages also load working memory with irrelevant numbers at exactly the moments users are holding the employee ID or prices, so the interruption costs more than the click to dismiss it.
 - **Screenshot:** Login with the chat open (the locker combo competes with the ID); optionally Payment's message, which references both.
+
+### #13: "REQUISITION MISMATCH," checked last, with no hint where (Thinking, don't make users diagnose system problems)
+- **What changed:** Payment compares the entered order (size, crust, all 4 toppings, sector) to the ticket. The check runs **last**, after the formula, the amount, and the ID have all been completed, and any difference produces only "Error 7: REQUISITION MISMATCH." It never says which step is wrong. The Handbook's error table repeats the same vague meaning.
+- **Files:** `js/app.js` (`orderMatchesTicket`, payment validator), `js/data.js` (error 7).
+- **Draft write-up:** The problem-solving guidelines say systems shouldn't make users diagnose problems. Here, one vague code could mean a wrong size, crust, sector, or any of four toppings, so users must re-audit every screen (with reshuffled toppings and faint checkmarks). Because payment rebuilds the formula whenever the order changes, fixing the mistake also means redoing all the transcription.
+- **Screenshot:** Payment with Error 7 after all fields are filled.
+
+### #14: The order ticket appears only in the shift briefing (Memory 1, make instructions easily accessible during a task)
+- **What changed:** The customer's order (size, crust, 4 toppings, sector) is shown only on Orientation, as a paper-style ticket. No later screen, and not the Handbook, shows it again. Users must memorize it (alongside the 16-character ID) or click Back through every screen to re-read it. Back keeps their progress.
+- **Files:** `index.html` (`#ticket`), `js/app.js` (ticket rendering in `buildInputs`), `js/session.js` (random ticket), `css/style.css` (`.ticket`).
+- **Draft write-up:** The memory guidelines say multi-step instructions should stay accessible while users carry out the task. The ticket is the task's instructions, a 7-part list, yet it disappears after the first screen. Users must hold it in working memory through six screens and a chat interruption per step, or navigate backward to consult it, and it's randomized each session, so it can't be learned.
+- **Screenshot:** Orientation with the ticket; then a later screen (e.g. Toppings) showing there's no reference to it.
+
+### #15: The wrong sector is autofilled "from the customer's last order" (Thinking, check assertions and assumptions)
+- **What changed:** Sector 7 (Evil HR) is preselected when the Sector screen first loads. The only notice is tiny gray text at the bottom of the screen. The ticket's sector is never Sector 7, so users who don't notice the assumption log the wrong sector and hit #13 at payment. The sidebar, labeled "Customer order," shows "Sector 7: Evil HR," which makes the assumption look like the customer's request.
+- **Files:** `js/app.js` (`setSector(PRESELECTED_SECTOR)`), `js/data.js` (`PRESELECTED_SECTOR`), `index.html` (`.sector-footnotes`).
+- **Draft write-up:** The decision-support guidelines say to let users declare and confirm assumptions for critical decisions. Here the system silently assumes the delivery sector from a previous order and presents it as already chosen. Users moving quickly accept it without knowing a decision was made for them.
+- **Screenshot:** Sector screen on arrival (Sector 7 highlighted); circle the footnote.
+
+### #16: Available vs. restricted sectors shown only by a faint green vs. red tint (Perception 1, avoid color-blind color pairs / use color redundantly)
+- **What changed:** Sectors 3, 5, and 8 are restricted. The only cue is a pale red tint vs. a pale green tint of nearly the same brightness, with no icon, pattern, or label. The map key is in tiny gray text at the bottom of the screen, far from the tiles. Choosing a restricted tile gives Error 10.
+- **Files:** `index.html`, `js/app.js` (tile classes, sector validator), `js/data.js` (`RESTRICTED_SECTORS`, error 10), `css/style.css` (`.tile-available`, `.tile-restricted`, `.sector-footnotes`).
+- **Draft write-up:** The color guidelines warn against red/green pairs (about 8% of men are color-blind) and say color should always be backed by another cue. Here, availability depends entirely on a red/green difference that's subtle even for full color vision, and the legend explaining it is separated from the map.
+- **Screenshot:** Sector map (optionally run through a color-blindness simulator), with the legend circled.
 
 ---
 
 ## Backlog (candidates, not yet decided)
 
 ### Orientation
-- Long "ordering procedure" shown once, never again: Memory 1, make instructions accessible during a task *(deferred)*
 - Centered or right-aligned text: Reading, avoid centered or right-aligned text *(deferred; could go on another screen)*
 - Confusable characters in the ID (O/0, I/1): Perception 2, bottom-up perception *(optional)*
 
@@ -164,16 +194,13 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - Second memory item ("Requisition Authorization Code") shown here, needed at Payment: Memory 1, working memory and dual-task
 
 ### Sector
-- Red/green-only availability: Perception 1, avoid color-blind color pairs
 - Legend far from the map: Perception 1, presentation of colors (separation)
-- Silently preselected Sector 7: Thinking, check assertions and assumptions
 - Delivery times out of chronological order: Attention 2, temporal order of options
 - Sector numbers not in spatial order: *needs a lecture home*
 - Enter doesn't advance: Attention 2, removing familiar features *(built as site behavior, intentionally not counted)*
 
 ### Payment
 - System knows the prices but makes users do the arithmetic: Thinking (Decision Support), don't make people calculate *(tried with a calculator, then removed; available to reuse)*
-- Error codes looked up in the Handbook: Thinking, don't make users diagnose system problems
 - Double-negative checkbox: Attention 2, options with conflicting messages
 - Look-alike dialog where OK = abandon: Perception 2, habituation
 - Inconsistent currency formats: Attention 2, culture and localization *(backup)*

@@ -40,14 +40,19 @@
              warm-colored text over a busy pizza pattern (see .screen-orientation in style.css). -->
         <div class="orientation-layout">
           <div class="orientation-main">
-            <h1>Welcome to the Lair Cafeteria</h1>
-            <p>Dr. Antiusabilious feeds his henchmen well. Use this terminal to order a pizza delivered anywhere in the lair.</p>
-            <p>You'll need your Henchman ID to log in and to pay.</p>
-            <p class="orientation-id-line">Your Henchman ID:
-              <canvas id="orientation-id" role="img" aria-label="Henchman ID"></canvas>
+            <h1>Welcome to your shift</h1>
+            <p>You're the newest hire at the Lair Cafeteria. A henchman just called in an order. Log in to the Requisition Terminal and enter it exactly as requested.</p>
+            <p>You'll need your employee ID to log in and to ring up the order.</p>
+            <p class="orientation-id-line">Your employee ID:
+              <canvas id="orientation-id" role="img" aria-label="Employee ID"></canvas>
             </p>
+
+            <!-- VIOLATION #14 (Memory 1: make instructions easily accessible during a task):
+                 the order ticket appears ONLY here. Randomized every session (js/session.js). -->
+            <div class="ticket" id="ticket"></div>
+
             <div class="actions">
-              <button type="button" class="btn primary" data-action="next">Start order</button>
+              <button type="button" class="btn primary" data-action="next">Start shift</button>
             </div>
           </div>
 
@@ -56,12 +61,12 @@
 
       <!-- Screen 1: Identity Verification -->
       <section class="screen" data-screen="login">
-        <h1>Log in</h1>
+        <h1>Employee log in</h1>
         <!-- VIOLATION #4 (Perception 2: be consistent): Next is top-right, above the field. -->
         <div class="actions actions-top-right">
           <button type="button" class="btn primary" data-action="next">Proceed</button>
         </div>
-        <label for="login-id">Henchman ID</label>
+        <label for="login-id">Employee ID</label>
         <input id="login-id" type="text" autocomplete="off" spellcheck="false">
         <p class="error" data-error aria-live="assertive"></p>
         <div class="actions">
@@ -71,7 +76,7 @@
 
       <!-- Screen 2: Portion Allocation (size) -->
       <section class="screen" data-screen="size">
-        <h1>Choose a size</h1>
+        <h1>Pizza size</h1>
         <fieldset>
           <legend>Size</legend>
           <div id="size-options" class="options"></div>
@@ -93,7 +98,7 @@
           <strong>🐍 MINION MONTHLY</strong> · 12 issues of lair gossip for just 9.99 Evil Credits! <span class="ad-link">Subscribe ›</span>
         </div>
 
-        <h1>Choose a crust</h1>
+        <h1>Crust</h1>
         <!-- VIOLATION #6 (Memory 2: see and choose is easier than recall and type):
              no list of options; users must type an exact crust classification. -->
         <label for="crust-input">State your crust classification</label>
@@ -110,7 +115,7 @@
 
       <!-- Screen 4: Topping Arsenal -->
       <section class="screen" data-screen="toppings">
-        <h1>Choose toppings</h1>
+        <h1>Toppings</h1>
         <!-- VIOLATION #4: Next is above the 42-item list, so users scroll back up to it. -->
         <div class="actions actions-top">
           <button type="button" class="btn primary" data-action="next">Comply</button>
@@ -131,8 +136,10 @@
 
       <!-- Screen 5: Delivery Sector -->
       <section class="screen" data-screen="sector">
-        <h1>Choose a delivery sector</h1>
-        <p>Pick a sector on the lair map.</p>
+        <h1>Delivery sector</h1>
+        <p>Select the customer's delivery sector on the lair map.</p>
+        <!-- VIOLATION #16 (Perception 1: avoid color pairs color-blind users can't distinguish):
+             available vs. restricted is shown ONLY by a green vs. red tint of similar brightness. -->
         <div id="sector-map" class="sector-map"></div>
         <!-- VIOLATION #4: Next is centered under the map. -->
         <div class="actions actions-center">
@@ -142,16 +149,20 @@
         <div class="actions">
           <button type="button" class="btn back" data-action="back">Back</button>
         </div>
+        <!-- VIOLATION #16: the legend sits far from the map, at the bottom of the screen.
+             VIOLATION #15 (Thinking: check assertions and assumptions): the autofill
+             note is tiny and gray, easy to miss. -->
+        <p class="sector-footnotes">Map key: green tiles are available, red tiles are restricted. · Sector 7 autofilled from the customer's last order.</p>
       </section>
 
       <!-- Screen 6: Evil Credit Transfer (payment) -->
       <section class="screen" data-screen="payment">
-        <h1>Pay with Evil Credits</h1>
+        <h1>Ring up the order</h1>
         <!-- Supporting mechanism for VIOLATION #3: the Evil Transfer Formula.
              One blank box per charge plus a gratuity box. Users must transcribe
              every price from the itemized charges at the bottom of the page.
              The amount field is read-only and filled only by the formula's ENTER. -->
-        <p>Fill in the Evil Transfer Formula™ with each of your charges and the gratuity percentage, then press ENTER to load your amount. Charges are itemized below.</p>
+        <p>Fill in the Evil Transfer Formula™ with each of the customer's charges and the gratuity percentage, then press ENTER to load the amount. Charges are itemized below.</p>
 
         <div class="formula" id="formula">
           <p class="formula-title">Evil Transfer Formula™</p>
@@ -159,10 +170,10 @@
           <button type="button" class="formula-enter" id="formula-load">ENTER</button>
         </div>
 
-        <label for="payment-amount">Amount to transfer (Evil Credits)</label>
+        <label for="payment-amount">Amount to charge (Evil Credits)</label>
         <input id="payment-amount" type="text" readonly placeholder="Press ENTER on the formula" autocomplete="off">
 
-        <label for="payment-id">Confirm your Henchman ID</label>
+        <label for="payment-id">Confirm your employee ID</label>
         <input id="payment-id" type="text" autocomplete="off" spellcheck="false">
         <p class="error" data-error aria-live="assertive"></p>
         <div class="actions">
@@ -182,7 +193,7 @@
           <p>5. Delivery times are estimates. Estimates are also estimates. The Management reserves the right to redefine "time."</p>
           <p>6. Toppings are assigned codenames for operational security. Disclosing a codename to non-henchmen constitutes a breach of these Terms and of the Topping Secrecy Act of Section 66-B.</p>
           <p>7. The Management may, at its sole discretion, rename sectors, move sectors, or pretend sectors never existed.</p>
-          <p>8. Henchmen who forget their Henchman ID agree to consult the Henchman Handbook and to feel appropriately embarrassed.</p>
+          <p>8. Employees who forget their employee ID agree to consult the Employee Handbook and to feel appropriately embarrassed.</p>
           <p>9. The Evil Transfer Formula™ is provided "as is." The Management makes no warranty regarding its accuracy, its memory, or its feelings.</p>
           <p>10. Pineapple on pizza is permitted under protest. The Management's protest is ongoing.</p>
 
@@ -236,12 +247,12 @@
 
       <!-- Screen 7: Confirmation -->
       <section class="screen" data-screen="confirmation">
-        <h1>Order placed</h1>
+        <h1>Order logged</h1>
         <p class="final-time" id="final-time"></p>
-        <p>Your order number is <strong id="order-number"></strong>. A minion is on the way.</p>
+        <p>Ticket <strong id="order-number"></strong> for <strong id="order-customer"></strong> has been logged. A minion is on the way.</p>
         <dl id="confirmation-summary" class="summary-list"></dl>
         <div class="actions">
-          <button type="button" class="btn primary" data-action="restart">Start a new order</button>
+          <button type="button" class="btn primary" data-action="restart">Log next order</button>
         </div>
       </section>
 
@@ -249,7 +260,7 @@
 
     <!-- Live order summary (shown on screens 2–6) -->
     <aside class="summary" id="summary" hidden>
-      <h2>Your order</h2>
+      <h2>Customer order</h2>
       <dl id="summary-list" class="summary-list"></dl>
     </aside>
 
@@ -287,7 +298,7 @@
       </div>
       <nav aria-label="Resources">
         <p class="footer-heading">Resources</p>
-        <a href="handbook.html">Henchman Handbook</a>
+        <a href="handbook.html">Employee Handbook</a>
       </nav>
     </div>
     <p class="footer-legal">© Dr. Antiusabilious Industries. All pizza rights reserved.</p>
@@ -313,6 +324,7 @@
   </div>
 
   <script src="js/data.js"></script>
+  <script src="js/session.js"></script>
   <script src="js/render-id.js"></script>
   <script src="js/app.js"></script>
 </body>

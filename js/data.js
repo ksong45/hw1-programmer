@@ -2,9 +2,8 @@
 // Everything the user sees (options, names, codenames, error text) lives here.
 // Edit this file to change content; app.js and the Handbook read from it.
 
-// VIOLATION #2: 16 random characters with no meaningful chunks.
-// (Avoids O/0 and I/1 so it's hard to memorize, not ambiguous.)
-const HENCHMAN_ID = "K7QX2M9WZ4TR8BVJ";
+// The employee ID, gratuity, and order ticket are randomized per session
+// in js/session.js (HENCHMAN_ID and GRATUITY_RATE are defined there).
 const CURRENCY = "Evil Credits";
 
 // Sizes. `rations` is for the reversed "Portion Allocation" slider later.
@@ -27,7 +26,8 @@ const CRUSTS = [
 const MIN_TOPPINGS = 4;
 
 // Mandatory gratuity, shown only as a percentage (supports VIOLATION #3).
-const GRATUITY_RATE = 0.18;
+// One of these is picked at random each session.
+const GRATUITY_OPTIONS = [12, 15, 17, 18, 20, 22];
 
 // Toppings. Each has its own messy price (supports VIOLATION #3).
 // Decoys (similar codenames) are marked in comments.
@@ -135,28 +135,37 @@ const SECTORS = [
   { number: 9, name: "Gift Shop",       row: 3, col: 3 },
 ];
 
+// VIOLATION #15: this sector is autofilled ("customer's last order").
+const PRESELECTED_SECTOR = 7;
+// VIOLATION #16: restricted sectors, shown only by a red (vs. green) tint.
+const RESTRICTED_SECTORS = [3, 5, 8];
+
+// Random customer names for the order ticket.
+const CUSTOMER_NAMES = ["Gary", "Brenda", "Klaus", "Dolores", "Mack", "Priya", "Otto", "Vera", "Stan", "Lulu"];
+
 // Error codes. Messages are clear for now; make them cryptic later.
 const ERROR_CODES = {
-  1: "That Henchman ID doesn't match. Check the ID shown on the welcome screen.",
+  1: "That employee ID doesn't match. Check the ID shown on your shift briefing.",
   2: "Choose a size to continue.",
   3: "That crust classification was not recognized.",
   4: "Select at least 4 toppings to continue.",
-  5: "Choose a delivery sector to continue.",
-  6: "The Henchman ID you entered doesn't match the one you logged in with.",
-  7: "Your order is missing a size, crust, topping, or delivery sector.",
+  5: "Select a delivery sector to continue.",
+  6: "The employee ID you entered doesn't match the one you logged in with.",
+  7: "REQUISITION MISMATCH.",
   8: "The numbers in the transfer formula don't match your itemized charges and gratuity.",
-  9: "Press ENTER on the transfer formula to load your amount before paying.",
+  9: "Press ENTER on the transfer formula to load the amount before charging.",
+  10: "That sector is restricted.",
 };
 
 
 // VIOLATION #12 (Attention 1: multitasking / task switching).
-// Dr. A interrupts the first time each step is shown. Several messages contain
+// Dr. A (your boss) interrupts the first time each step is shown. Several messages contain
 // numbers and codes that compete with the ID and prices in working memory.
 const CHAT_MESSAGES = {
-  login: "Welcome back, henchman! Reminder: your locker combo is 4-8-2-1. Don't forget it.",
-  size: "Quick survey: on a scale of 1 to 10, how evil do you feel today? No need to answer. I already know.",
-  crust: "The shark feeding schedule has changed: 11:40, 13:15, and 16:05. Plan accordingly.",
-  toppings: "HR says Form 7Q-22B is overdue. Also, pepperoni prices are up 3%. Unrelated. Probably.",
-  sector: "The Launch Bay is closed until 18:30. The Gift Shop in Sector 9 has 20% off capes.",
-  payment: "Remember: your Henchman ID is NOT your locker combo (4-8-2-1). Please don't mix them up again.",
+  login: "Morning, new hire. Your locker combo is 4-8-2-1. Don't lose it.",
+  size: "Quick poll for the break room: rate today's lighting from 1 to 10. I'll wait.",
+  crust: "Shark feeding moved to 11:40, 13:15, and 16:05. Cover it if you're free.",
+  toppings: "HR says Form 7Q-22B is overdue. Also, table 12 wants extra napkins.",
+  sector: "The Launch Bay is closed until 18:30. The Gift Shop has 20% off capes.",
+  payment: "Reminder: your employee ID is NOT your locker combo (4-8-2-1). Stop mixing them up.",
 };

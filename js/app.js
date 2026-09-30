@@ -41,6 +41,18 @@ function orderTotal() {
 function buildInputs() {
   drawUncopyableText($("#orientation-id"), HENCHMAN_ID, { color: "#5a2206" }); // VIOLATION #2
 
+  // VIOLATION #14: the order ticket (shown only on Orientation).
+  const t = SESSION.ticket;
+  $("#ticket").innerHTML = `
+    <p class="ticket-head">🧾 Incoming order · Ticket #${t.number}</p>
+    <p class="ticket-customer">Customer: ${t.customer} (henchman)</p>
+    <dl class="ticket-lines">
+      <dt>Size</dt><dd>${findById(SIZES, t.size).name}</dd>
+      <dt>Crust</dt><dd>${findById(CRUSTS, t.crust).name}</dd>
+      <dt>Toppings</dt><dd>${t.toppings.map((id) => findById(TOPPINGS, id).name).join(", ")}</dd>
+      <dt>Deliver to</dt><dd>${findSector(t.sector).name}</dd>
+    </dl>`;
+
   $("#size-options").innerHTML = SIZES.map((s) => `
     <label class="option">
       <input type="radio" name="size" value="${s.id}">
@@ -56,7 +68,7 @@ function buildInputs() {
     </label>`).join("");
 
   $("#sector-map").innerHTML = SECTORS.map((s) => `
-    <button type="button" class="sector-tile" data-sector="${s.number}"
+    <button type="button" class="sector-tile ${RESTRICTED_SECTORS.includes(s.number) ? "tile-restricted" : "tile-available"}" data-sector="${s.number}"
       style="grid-row:${s.row}; grid-column:${s.col}" aria-pressed="false">
       <span class="sector-number">${s.number}</span>
       <span>${s.name}</span>
@@ -86,7 +98,7 @@ function summaryHTML(includeTotal = false) {
     <dt>Crust</dt><dd>${crust ? crust.name : "—"}</dd>
     <dt>Toppings</dt><dd>${toppings.length ? toppings.join(", ") : "—"}</dd>
     <dt>Delivery</dt><dd>${sector ? `Sector ${sector.number}: ${sector.name}` : "—"}</dd>
-    ${includeTotal ? `<dt>Total paid</dt><dd>${formatCredits(orderTotal())}</dd>` : ""}`;
+    ${includeTotal ? `<dt>Total charged</dt><dd>${formatCredits(orderTotal())}</dd>` : ""}`;
 }
 
 function renderSummary() {
@@ -124,12 +136,18 @@ const validators = {
     return match ? null : 3;
   },
   toppings: () => (order.toppings.length >= MIN_TOPPINGS ? null : 4),
-  sector: () => (order.sector ? null : 5),
+  sector: () => {
+    if (!order.sector) return 5;
+    return RESTRICTED_SECTORS.includes(order.sector) ? 10 : null;
+  },
   payment: () => {
     if (!formulaMatchesCharges()) return 8;
     const loaded = parseNumber($("#payment-amount").value);
     if (Number.isNaN(loaded) || Math.abs(loaded - orderTotal()) > 0.011) return 9;
     if (normalizeId($("#payment-id").value) !== HENCHMAN_ID) return 6;
+    // VIOLATION #13 (Thinking: don't make users diagnose system problems):
+    // checked LAST, after all the formula work, and the error never says which step is wrong.
+    if (!orderMatchesTicket()) return 7;
     if (!order.size || !order.crust || !order.toppings.length || !order.sector) return 7;
     return null;
   },
@@ -193,7 +211,8 @@ const onEnter = {
   },
   confirmation: () => {
     stopTimer();
-    $("#order-number").textContent = order.number;
+    $("#order-number").textContent = "#" + SESSION.ticket.number;
+    $("#order-customer").textContent = SESSION.ticket.customer;
     $("#confirmation-summary").innerHTML = summaryHTML(true);
   },
 };
@@ -249,6 +268,16 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !$("#chat-overlay").hidden) closeChat();
 });
 
+// VIOLATION #13: does the entered order match the ticket exactly?
+function orderMatchesTicket() {
+  const t = SESSION.ticket;
+  return order.size === t.size &&
+    order.crust === t.crust &&
+    order.sector === t.sector &&
+    order.toppings.length === t.toppings.length &&
+    t.toppings.every((id) => order.toppings.includes(id));
+}
+
 function placeOrder() {
   order.number = "LC-" + Math.floor(1000 + Math.random() * 9000);
 }
@@ -271,7 +300,7 @@ function goBack() {
 }
 
 function restart() {
-  clearTimerStorage();
+  clearSession();
   window.location.href = window.location.pathname;
 }
 
@@ -382,32 +411,11 @@ new IntersectionObserver((entries) => {
 }).observe(chargesPanel);
 
 // ---------- Task timer (instructor request; not a violation) ----------
-// Starts when the site first opens and keeps running through page refreshes
-// (so reloading doesn't reset the measurement). Stops on the confirmation
-// screen, which shows the final time. "Start a new order" resets it.
+// Starts when the session starts (site first opened) and keeps running through
+// refreshes. Stops on the confirmation screen, which shows the final time.
+// "Log next order" starts a new session and a new timer.
 
-const TIMER_START_KEY = "lairTimerStart";
-const TIMER_DONE_KEY = "lairTimerDone";
-
-function storageGet(key) {
-  try { return sessionStorage.getItem(key); } catch (e) { return null; }
-}
-function storageSet(key, value) {
-  try { sessionStorage.setItem(key, value); } catch (e) { /* storage unavailable */ }
-}
-function clearTimerStorage() {
-  try {
-    sessionStorage.removeItem(TIMER_START_KEY);
-    sessionStorage.removeItem(TIMER_DONE_KEY);
-  } catch (e) { /* storage unavailable */ }
-}
-
-let timerStart = Number(storageGet(TIMER_START_KEY));
-if (!timerStart || storageGet(TIMER_DONE_KEY)) {
-  timerStart = Date.now();
-  clearTimerStorage();
-  storageSet(TIMER_START_KEY, String(timerStart));
-}
+const timerStart = SESSION.start;
 
 function formatClock(ms) {
   const total = Math.floor(ms / 1000);
@@ -435,12 +443,14 @@ function stopTimer() {
   const elapsed = Date.now() - timerStart;
   $("#task-timer").textContent = "⏱ " + formatClock(elapsed) + " · finished";
   $("#final-time").textContent = `⏱ Your time: ${formatLong(elapsed)}`;
-  storageSet(TIMER_DONE_KEY, "1");
+  SESSION.done = true;
+  saveSession(SESSION);
 }
 
 // ---------- Start ----------
 
 buildInputs();
+setSector(PRESELECTED_SECTOR); // VIOLATION #15: autofilled from the "last order"
 
 // DEV SHORTCUT: index.html?screen=toppings jumps straight to a screen.
 // Delete this block before submitting.

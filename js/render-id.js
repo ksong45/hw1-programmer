@@ -1,5 +1,5 @@
 // Draws text onto a <canvas> so it can't be selected or copied.
-// Used for the Henchman ID on the Orientation screen and in the Handbook.
+// Used for the employee ID on the Orientation screen and in the Handbook.
 // Part of VIOLATION #2: forces users to memorize (or hand-copy) the ID.
 
 function drawUncopyableText(canvas, text, options = {}) {

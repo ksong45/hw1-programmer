@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Henchman Handbook</title>
+  <title>Employee Handbook</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -23,11 +23,11 @@
 
   <div class="layout layout-single">
   <main class="handbook">
-    <h1>Henchman Handbook</h1>
+    <h1>Employee Handbook</h1>
     <p><a href="index.html">← Return to ordering</a></p>
 
-    <h2>Forgotten Henchman ID</h2>
-    <p>Your Henchman ID is: <canvas id="hb-id" role="img" aria-label="Henchman ID" style="vertical-align: middle;"></canvas></p>
+    <h2>Forgotten employee ID</h2>
+    <p>Your employee ID for this shift is: <canvas id="hb-id" role="img" aria-label="Employee ID" style="vertical-align: middle;"></canvas></p>
 
     <h2>Crust classifications</h2>
     <div class="table-wrap"><table id="hb-crusts"></table></div>
@@ -51,13 +51,14 @@
       </div>
       <nav aria-label="Resources">
         <p class="footer-heading">Resources</p>
-        <a href="handbook.html">Henchman Handbook</a>
+        <a href="handbook.html">Employee Handbook</a>
       </nav>
     </div>
     <p class="footer-legal">© Dr. Antiusabilious Industries. All pizza rights reserved.</p>
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/session.js"></script>
   <script src="js/render-id.js"></script>
   <script>
     // Builds the Handbook from data.js so it always matches the site.
