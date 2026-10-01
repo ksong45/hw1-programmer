@@ -138,8 +138,6 @@
       <section class="screen" data-screen="sector">
         <h1>Delivery sector</h1>
         <p>Select the customer's delivery sector on the lair map.</p>
-        <!-- VIOLATION #16 (Perception 1: avoid color pairs color-blind users can't distinguish):
-             available vs. restricted is shown ONLY by a green vs. red tint of similar brightness. -->
         <div id="sector-map" class="sector-map"></div>
         <!-- VIOLATION #4: Next is centered under the map. -->
         <div class="actions actions-center">
@@ -149,10 +147,6 @@
         <div class="actions">
           <button type="button" class="btn back" data-action="back">Back</button>
         </div>
-        <!-- VIOLATION #16: the legend sits far from the map, at the bottom of the screen.
-             VIOLATION #15 (Thinking: check assertions and assumptions): the autofill
-             note is tiny and gray, easy to miss. -->
-        <p class="sector-footnotes">Map key: green tiles are available, red tiles are restricted. · Sector 7 autofilled from the customer's last order.</p>
       </section>
 
       <!-- Screen 6: Evil Credit Transfer (payment) -->
@@ -277,7 +271,12 @@
       <div class="rail-ad rail-ad-crust">
         <p class="ad-label">Sponsored</p>
         <p class="rail-ad-title">🔥 HOT CRUST DEALS 🔥</p>
-        <p class="rail-ad-list">Thin Veneer ★ Standard Slab ★ Deep Abyss ★ Stuffed Dungeon</p>
+        <ul class="rail-ad-key">
+          <li>Thin = <strong>Thin Veneer</strong></li>
+          <li>Hand-tossed = <strong>Standard Slab</strong></li>
+          <li>Deep dish = <strong>Deep Abyss</strong></li>
+          <li>Stuffed = <strong>Stuffed Dungeon</strong></li>
+        </ul>
         <p>Limited time! While supplies last!</p>
         <p class="ad-link">Shop now ›</p>
       </div>

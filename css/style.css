@@ -376,7 +376,7 @@ th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(
 .rail-ad-sharks { background: linear-gradient(135deg, #cdeffd, #9fd8f0); border: 2px dashed #3a8fb7; }
 .rail-ad-crust  { background: linear-gradient(135deg, #fff3a8, #ffc9e0); border: 2px dashed #e0a100; }
 .rail-ad-hiring { background: linear-gradient(135deg, #e6ffd1, #c3f09b); border: 2px dashed #5f9e2f; }
-.rail-ad-list { font-weight: 600; }
+.rail-ad-key { margin: 0.4rem 0; padding: 0; list-style: none; line-height: 1.6; }
 
 .leaderboard-ad {
   display: flex;
@@ -532,13 +532,3 @@ th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(
 .ticket-lines dt { font-weight: 700; }
 .ticket-lines dd { margin: 0; }
 
-/* ---------- Sector tiles (VIOLATION #16) and footnotes (#15, #16) ---------- */
-/* Green vs. red tints of near-identical brightness, with no icon or label. */
-.sector-tile.tile-available { background: #d9e6cf; }
-.sector-tile.tile-restricted { background: #e8d2cc; }
-.sector-tile.selected { background: var(--selected); border: 2px solid var(--accent); }
-.sector-footnotes {
-  margin-top: 2.5rem;
-  font-size: 0.72rem;
-  color: #a19d95;
-}

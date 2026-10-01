@@ -34,8 +34,6 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 | 12 | Login → Payment | Attention 1 | Multitasking = serial task switching (interruptions) | Built |
 | 13 | Payment | Thinking (Problem Solving) | Don't make users diagnose system problems | Built |
 | 14 | Orientation (ticket) | Memory 1 | Make instructions easily accessible during a task | Built |
-| 15 | Sector | Thinking (Decision Support) | Check assertions and assumptions | Built |
-| 16 | Sector | Perception 1 | Avoid color pairs that color-blind people cannot distinguish (use color redundantly) | Built |
 
 ### #1: Pizza background behind warm text (Reading, avoid text on noisy background)
 - **What changed:** The Orientation screen sits on a busy CSS pizza pattern (pepperoni, olives, basil, cheese). Heading and body text are red, brown, and orange, the same palette as the pattern.
@@ -95,7 +93,7 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - **Where the answers are:** the right-rail "HOT CRUST DEALS" ad (see #7) and the Handbook's crust table.
 
 ### #7: Crust answers disguised as an ad among other ads (Attention 2, banner blindness)
-- **What changed:** On the Crust screen, the right rail (normally the order summary) shows three ad-styled boxes: "Shark Tank Timeshares," "🔥 HOT CRUST DEALS 🔥," and "Laser Lab is HIRING." The middle ad lists the four valid crust classifications as if they were promotions. A leaderboard-style "MINION MONTHLY" ad sits above the heading to reinforce that this page has ads.
+- **What changed:** On the Crust screen, the right rail (normally the order summary) shows three ad-styled boxes: "Shark Tank Timeshares," "🔥 HOT CRUST DEALS 🔥," and "Laser Lab is HIRING." The middle ad holds the only on-screen key from the ticket's plain crust names to the kitchen codes ("Thin = Thin Veneer," "Hand-tossed = Standard Slab," "Deep dish = Deep Abyss," "Stuffed = Stuffed Dungeon"), dressed up as a promotion. A leaderboard-style "MINION MONTHLY" ad sits above the heading to reinforce that this page has ads.
 - **Files:** `index.html` (`.leaderboard-ad`, `#ad-rail`), `js/app.js` (`AD_RAIL_SCREENS`; the summary is hidden on Crust), `css/style.css` (ad styles).
 - **Draft write-up:** Users learn to ignore elements that appear where ads usually go (the right rail, the top of the page) or that look like ads. Here the only on-screen source of the answer is styled and placed exactly like an ad, surrounded by real-looking decoy ads. Users stare at an empty text field, go hunting in the Handbook, and miss that the answer was beside them the whole time.
 - **Screenshot:** Full Crust screen; circle the crust ad and point to the empty field.
@@ -143,17 +141,6 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - **Draft write-up:** The memory guidelines say multi-step instructions should stay accessible while users carry out the task. The ticket is the task's instructions, a 7-part list, yet it disappears after the first screen. Users must hold it in working memory through six screens and a chat interruption per step, or navigate backward to consult it, and it's randomized each session, so it can't be learned.
 - **Screenshot:** Orientation with the ticket; then a later screen (e.g. Toppings) showing there's no reference to it.
 
-### #15: The wrong sector is autofilled "from the customer's last order" (Thinking, check assertions and assumptions)
-- **What changed:** Sector 7 (Evil HR) is preselected when the Sector screen first loads. The only notice is tiny gray text at the bottom of the screen. The ticket's sector is never Sector 7, so users who don't notice the assumption log the wrong sector and hit #13 at payment. The sidebar, labeled "Customer order," shows "Sector 7: Evil HR," which makes the assumption look like the customer's request.
-- **Files:** `js/app.js` (`setSector(PRESELECTED_SECTOR)`), `js/data.js` (`PRESELECTED_SECTOR`), `index.html` (`.sector-footnotes`).
-- **Draft write-up:** The decision-support guidelines say to let users declare and confirm assumptions for critical decisions. Here the system silently assumes the delivery sector from a previous order and presents it as already chosen. Users moving quickly accept it without knowing a decision was made for them.
-- **Screenshot:** Sector screen on arrival (Sector 7 highlighted); circle the footnote.
-
-### #16: Available vs. restricted sectors shown only by a faint green vs. red tint (Perception 1, avoid color-blind color pairs / use color redundantly)
-- **What changed:** Sectors 3, 5, and 8 are restricted. The only cue is a pale red tint vs. a pale green tint of nearly the same brightness, with no icon, pattern, or label. The map key is in tiny gray text at the bottom of the screen, far from the tiles. Choosing a restricted tile gives Error 10.
-- **Files:** `index.html`, `js/app.js` (tile classes, sector validator), `js/data.js` (`RESTRICTED_SECTORS`, error 10), `css/style.css` (`.tile-available`, `.tile-restricted`, `.sector-footnotes`).
-- **Draft write-up:** The color guidelines warn against red/green pairs (about 8% of men are color-blind) and say color should always be backed by another cue. Here, availability depends entirely on a red/green difference that's subtle even for full color vision, and the legend explaining it is separated from the map.
-- **Screenshot:** Sector map (optionally run through a color-blindness simulator), with the legend circled.
 
 ---
 
@@ -194,6 +181,8 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - Second memory item ("Requisition Authorization Code") shown here, needed at Payment: Memory 1, working memory and dual-task
 
 ### Sector
+- Wrong sector autofilled "from the customer's last order": Thinking, check assertions and assumptions *(built, then removed; Sector is now plain static tiles)*
+- Available vs. restricted shown only by faint red vs. green: Perception 1, avoid color-blind color pairs *(built, then removed: the destination was never restricted, so it cost almost no time)*
 - Legend far from the map: Perception 1, presentation of colors (separation)
 - Delivery times out of chronological order: Attention 2, temporal order of options
 - Sector numbers not in spatial order: *needs a lecture home*

@@ -68,7 +68,7 @@ function buildInputs() {
     </label>`).join("");
 
   $("#sector-map").innerHTML = SECTORS.map((s) => `
-    <button type="button" class="sector-tile ${RESTRICTED_SECTORS.includes(s.number) ? "tile-restricted" : "tile-available"}" data-sector="${s.number}"
+    <button type="button" class="sector-tile" data-sector="${s.number}"
       style="grid-row:${s.row}; grid-column:${s.col}" aria-pressed="false">
       <span class="sector-number">${s.number}</span>
       <span>${s.name}</span>
@@ -136,10 +136,7 @@ const validators = {
     return match ? null : 3;
   },
   toppings: () => (order.toppings.length >= MIN_TOPPINGS ? null : 4),
-  sector: () => {
-    if (!order.sector) return 5;
-    return RESTRICTED_SECTORS.includes(order.sector) ? 10 : null;
-  },
+  sector: () => (order.sector ? null : 5),
   payment: () => {
     if (!formulaMatchesCharges()) return 8;
     const loaded = parseNumber($("#payment-amount").value);
@@ -450,7 +447,6 @@ function stopTimer() {
 // ---------- Start ----------
 
 buildInputs();
-setSector(PRESELECTED_SECTOR); // VIOLATION #15: autofilled from the "last order"
 
 // DEV SHORTCUT: index.html?screen=toppings jumps straight to a screen.
 // Delete this block before submitting.

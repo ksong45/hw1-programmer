@@ -30,8 +30,6 @@ function randomEmployeeId() {
 }
 
 function newSession() {
-  const deliverable = SECTORS.filter((s) =>
-    s.number !== PRESELECTED_SECTOR && !RESTRICTED_SECTORS.includes(s.number));
   return {
     id: randomEmployeeId(),
     gratuity: randomItem(GRATUITY_OPTIONS),
@@ -41,7 +39,7 @@ function newSession() {
       size: randomItem(SIZES).id,
       crust: randomItem(CRUSTS).id,
       toppings: pickDistinct(TOPPINGS, MIN_TOPPINGS).map((t) => t.id),
-      sector: randomItem(deliverable).number,
+      sector: randomItem(SECTORS).number,
     },
     start: Date.now(),
     done: false,

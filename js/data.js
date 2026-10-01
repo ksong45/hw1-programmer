@@ -135,10 +135,6 @@ const SECTORS = [
   { number: 9, name: "Gift Shop",       row: 3, col: 3 },
 ];
 
-// VIOLATION #15: this sector is autofilled ("customer's last order").
-const PRESELECTED_SECTOR = 7;
-// VIOLATION #16: restricted sectors, shown only by a red (vs. green) tint.
-const RESTRICTED_SECTORS = [3, 5, 8];
 
 // Random customer names for the order ticket.
 const CUSTOMER_NAMES = ["Gary", "Brenda", "Klaus", "Dolores", "Mack", "Priya", "Otto", "Vera", "Stan", "Lulu"];
@@ -154,7 +150,6 @@ const ERROR_CODES = {
   7: "REQUISITION MISMATCH.",
   8: "The numbers in the transfer formula don't match your itemized charges and gratuity.",
   9: "Press ENTER on the transfer formula to load the amount before charging.",
-  10: "That sector is restricted.",
 };
 
 
