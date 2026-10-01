@@ -448,7 +448,4 @@ function stopTimer() {
 
 buildInputs();
 
-// DEV SHORTCUT: index.html?screen=toppings jumps straight to a screen.
-// Delete this block before submitting.
-const devScreen = new URLSearchParams(window.location.search).get("screen");
-showScreen(Math.max(0, SCREENS.indexOf(devScreen)));
+showScreen(0);

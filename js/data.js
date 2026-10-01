@@ -153,7 +153,7 @@ const ERROR_CODES = {
 };
 
 
-// VIOLATION #12 (Attention 1: multitasking / task switching).
+// VIOLATION #12 (Perception 1: unnecessary blocking dialog).
 // Dr. A (your boss) interrupts the first time each step is shown. Several messages contain
 // numbers and codes that compete with the ID and prices in working memory.
 const CHAT_MESSAGES = {

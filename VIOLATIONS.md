@@ -31,7 +31,7 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 | 9 | Toppings | Memory 1 | Changing the ordering of information (consistency / power law of learning) | Built |
 | 10 | Toppings | Perception 1 | Distinguish colors by saturation and brightness, as well as hue | Built |
 | 11 | All screens (header) | Thinking (Problem Solving) | Prominently indicate system status and progress (setting expectations) | Built |
-| 12 | Login → Payment | Attention 1 | Multitasking = serial task switching (interruptions) | Built |
+| 12 | Login → Payment | Perception 1 | Use dialog boxes to avoid significant consequences of user action (unnecessary blocking pop-up; habituation) | Built |
 | 13 | Payment | Thinking (Problem Solving) | Don't make users diagnose system problems | Built |
 | 14 | Orientation (ticket) | Memory 1 | Make instructions easily accessible during a task | Built |
 
@@ -122,7 +122,7 @@ Documentation lives in a blog-style Google Slides deck exported to PDF (with the
 - **Draft write-up:** The problem-solving guidelines say to prominently indicate status and progress, and the decision-making lecture shows how setting expectations helps users estimate interaction cost. This bar is prominent and looks authoritative, but it sets the wrong expectation: the first three steps each fill a third of the bar, so at step 3 users see 99% "complete" and believe they're one click from done, while three screens remain, including the longest (payment). With no step count to cross-check, the bar is the only status information users have.
 - **Screenshot:** The progress bar at step 3 (99%) and at step 6 (99.8%).
 
-### #12: Dr. A's chat interrupts every step (Attention 1, multitasking / serial task switching)
+### #12: Dr. A's chat interrupts every step (Perception 1, use dialog boxes to avoid significant consequences of user action)
 - **What changed:** The first time each step (Login through Payment) is shown, a chat window from "Dr. Antiusabilious" opens over a dimmed screen and blocks the page until it's closed with ✕ (or Esc). Each step has its own message, and several contain numbers and codes: locker combo 4-8-2-1, shark feeding times, Form 7Q-22B, "closed until 18:30."
 - **Guardrails (keeps it within the rubric):** deterministic (same message, once per step, no timers or randomness); the ✕ is normal-sized, visible, and automatically focused; Esc also closes it. It never reappears when revisiting a step.
 - **Files:** `index.html` (`#chat-overlay`), `js/data.js` (`CHAT_MESSAGES`), `js/app.js` (`openChat`, `closeChat`, called from `showScreen`), `css/style.css` (chat styles).
