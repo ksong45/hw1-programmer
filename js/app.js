@@ -389,13 +389,6 @@ document.addEventListener("keydown", (event) => {
   }
 }, true);
 
-// No pasting into formula boxes: prices must be carried in memory (VIOLATION #3).
-document.addEventListener("paste", (event) => {
-  if (event.target.matches(".formula-box")) event.preventDefault();
-});
-document.addEventListener("drop", (event) => {
-  if (event.target.matches(".formula-box")) event.preventDefault();
-});
 
 // Auto-collapsing charges (supports VIOLATION #3): the itemized list closes
 // itself whenever it scrolls out of view, so every trip back down to read a
